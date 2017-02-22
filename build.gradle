@@ -3,13 +3,18 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0-beta4'
+        classpath 'com.android.tools.build:gradle:2.3.0-rc1'
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        maven { url 'http://jitpack.io' }
+    }
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = "1.7"
+        targetCompatibility = "1.7"
     }
 }
 
