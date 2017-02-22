@@ -39,7 +39,7 @@ allprojects {
 	}
 	
 dependencies {
-	    compile 'com.github.ihsanbal:LoggingInterceptor:1.0'
+	    compile 'com.github.ihsanbal:LoggingInterceptor:1.0.2'
 	}
 ```
 
