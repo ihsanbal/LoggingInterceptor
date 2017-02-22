@@ -31,14 +31,15 @@ Download
 
 Gradle:
 ```groovy
-repositories {
-	    maven {
-	        url "https://jitpack.io"
-	    }
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
 	}
 	
 dependencies {
-	        compile 'com.github.ihsanbal:LoggingInterceptor:1.0'
+	    compile 'com.github.ihsanbal:LoggingInterceptor:1.0'
 	}
 ```
 
