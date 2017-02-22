@@ -1,0 +1,43 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "ihsanbal.com.logginginterceptor"
+        minSdkVersion 9
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'io.reactivex:rxjava:' + rootProject.ext.rxjavaVersion
+    compile 'io.reactivex:rxandroid:' + rootProject.ext.rxAndroidVersion
+    compile 'com.squareup.retrofit2:retrofit:' + rootProject.ext.retrofitVersion
+    compile 'com.squareup.retrofit2:adapter-rxjava:' + rootProject.ext.retrofitRxAdapterVersion
+    annotationProcessor 'com.google.dagger:dagger-compiler:' + rootProject.ext.daggerVersion
+    compile 'com.google.dagger:dagger:' + rootProject.ext.daggerVersion
+    provided 'javax.annotation:jsr250-api:1.0'
+    compile 'com.jakewharton:butterknife:' + rootProject.ext.butterKnifeVersion
+    annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterKnifeVersion
+    compile 'com.squareup.retrofit2:converter-gson:' + rootProject.ext.gsonConverterVersion
+    compile 'com.squareup.okhttp3:okhttp:' + rootProject.ext.okhttpVersion
+    compile project(':library')
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    testCompile 'junit:junit:4.12'
+}

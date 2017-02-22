@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".ui.MainActivity">
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/button.post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/req_post" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/button.get"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/req_get" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/button.delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/req_delete" />
+
+</LinearLayout>
