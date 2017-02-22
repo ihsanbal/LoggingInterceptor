@@ -37,7 +37,8 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterKnifeVersion
     compile 'com.squareup.retrofit2:converter-gson:' + rootProject.ext.gsonConverterVersion
     compile 'com.squareup.okhttp3:okhttp:' + rootProject.ext.okhttpVersion
-    compile project(':library')
+//    compile project(':library')
+    compile 'com.github.ihsanbal:LoggingInterceptor:1.0.2'
     compile 'com.android.support:appcompat-v7:25.1.1'
     testCompile 'junit:junit:4.12'
 }
