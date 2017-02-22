@@ -3,6 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath 'com.android.tools.build:gradle:2.3.0-rc1'
     }
 }
@@ -10,11 +11,6 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven { url 'http://jitpack.io' }
-    }
-    tasks.withType(JavaCompile) {
-        sourceCompatibility = "1.7"
-        targetCompatibility = "1.7"
     }
 }
 
