@@ -2,7 +2,7 @@
 
 Interceptor for OkHttp3 with pretty logger - [OkHttp3](https://github.com/square/okhttp) 
 
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-StreetView-green.svg?style=flat-square)](http://android-arsenal.com/details/1/2972)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-LoggingInterceptor-green.svg?style=flat-square)](https://android-arsenal.com/details/1/5342)
 [![API](https://img.shields.io/badge/API-9%2B-brightgreen.svg?style=flat-square)](https://android-arsenal.com/api?level=9)
 
 <p align="center">
