@@ -23,7 +23,15 @@ OkHttpClient.Builder client = new OkHttpClient.Builder();
                 .response("Response")
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .build());
-        client.build();
+        OkHttpClient okHttpClient = client.build();
+	
+//You can use with Retrofit
+Retrofit retrofitAdapter = new Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .baseUrl("https://.../")
+            .client(okHttpClient)
+            .build();
 ```
 
 Download
