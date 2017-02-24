@@ -28,12 +28,14 @@ public class LoggingInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        Request request;
+        Request request = chain.request();
         if (builder.getHeaders().size() > 0) {
-            request = chain.request().newBuilder().headers(builder.getHeaders()).build();
-        } else {
-            request = chain.request();
+            Headers headers = request.headers();
+            builder.addHeaders(headers);
+            request = chain.request().newBuilder()
+                    .headers(builder.getHeaders()).build();
         }
+
         if (!isDebug || builder.getLevel() == Level.NONE) {
             return chain.proceed(request);
         }
@@ -147,6 +149,15 @@ public class LoggingInterceptor implements Interceptor {
         public Builder response(String tag) {
             this.responseTag = tag;
             return this;
+        }
+
+        void addHeaders(Headers headers) {
+            if (headers != null && headers.size() > 0) {
+                Object[] names = headers.names().toArray();
+                for (int i = 0; i < headers.size(); i++) {
+                    addHeader(names[i].toString(), headers.get(names[i].toString()));
+                }
+            }
         }
     }
 

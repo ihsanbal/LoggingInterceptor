@@ -5,6 +5,7 @@ import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import rx.Observable;
 
@@ -19,5 +20,6 @@ public interface Api {
     Observable<ResponseBody> delete();
 
     @POST("post")
+    @Headers("Cache-Control: Custom-Max-Value=640000")
     Observable<ResponseBody> post(@Body RequestBody requestBody);
 }
