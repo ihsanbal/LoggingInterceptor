@@ -1,7 +1,7 @@
 #LoggingInterceptor
 
 Interceptor for OkHttp3 with pretty logger - [OkHttp3](https://github.com/square/okhttp) 
-
+[![Build Status](https://travis-ci.org/ihsanbal/LoggingInterceptor.svg?branch=master)](https://travis-ci.org/ihsanbal/LoggingInterceptor)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-LoggingInterceptor-green.svg?style=flat-square)](https://android-arsenal.com/details/1/5342)
 [![API](https://img.shields.io/badge/API-9%2B-brightgreen.svg?style=flat-square)](https://android-arsenal.com/api?level=9)
 
