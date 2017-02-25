@@ -24,6 +24,7 @@ ext {
     rxAndroidVersion = '1.0.1'
     butterKnifeVersion = '8.4.0'
     daggerVersion = '2.8'
+    supportVersion = '25.2.0'
 }
 
 task clean(type: Delete) {
