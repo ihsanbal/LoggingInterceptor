@@ -12,7 +12,7 @@ jdk:
   - oraclejdk8
 
 notifications:
-  email: true
+  email: false
 
 sudo: false
 
@@ -22,7 +22,13 @@ before_install:
 script:
 - ./gradlew assembleDebug
 
+branches:
+  only:
+    - master
+    - development
+
 cache:
   directories:
     - $HOME/.m2
     - $HOME/.gradle
+
