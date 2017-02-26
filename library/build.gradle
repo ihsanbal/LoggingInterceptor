@@ -1,7 +1,19 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'checkstyle'
 
 group = 'com.github.ihsanbal'
+
+check.dependsOn('checkstyle')
+
+task checkstyle(type: Checkstyle) {
+    configFile = rootProject.file('checkstyle.xml')
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    classpath = files()
+}
 
 android {
     compileSdkVersion 25
