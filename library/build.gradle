@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'checkstyle'
 
-group='com.github.ihsanbal'
+group = 'com.github.ihsanbal'
 
 check.dependsOn('checkstyle')
 

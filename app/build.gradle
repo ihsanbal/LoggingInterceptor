@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+
     defaultConfig {
         applicationId "ihsanbal.com.logginginterceptor"
         minSdkVersion 9
@@ -10,23 +11,26 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.1.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.android.support:appcompat-v7:' + rootProject.ext.supportVersion
     compile 'io.reactivex:rxjava:' + rootProject.ext.rxjavaVersion
     compile 'io.reactivex:rxandroid:' + rootProject.ext.rxAndroidVersion
     compile 'com.squareup.retrofit2:retrofit:' + rootProject.ext.retrofitVersion
     compile 'com.squareup.retrofit2:adapter-rxjava:' + rootProject.ext.retrofitRxAdapterVersion
-    annotationProcessor 'com.google.dagger:dagger-compiler:' + rootProject.ext.daggerVersion
     compile 'com.google.dagger:dagger:' + rootProject.ext.daggerVersion
-    provided 'javax.annotation:jsr250-api:1.0'
     compile 'com.jakewharton:butterknife:' + rootProject.ext.butterKnifeVersion
-    annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterKnifeVersion
     compile 'com.squareup.retrofit2:converter-gson:' + rootProject.ext.gsonConverterVersion
     compile 'com.squareup.okhttp3:okhttp:' + rootProject.ext.okhttpVersion
+    annotationProcessor 'com.google.dagger:dagger-compiler:' + rootProject.ext.daggerVersion
+    annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterKnifeVersion
+    provided 'javax.annotation:jsr250-api:1.0'
     compile project(':library')
-    //compile 'com.github.ihsanbal:LoggingInterceptor:1.0.2'
-    compile 'com.android.support:appcompat-v7:25.1.1'
 }
