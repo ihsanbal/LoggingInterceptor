@@ -1,7 +1,18 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'checkstyle'
 
 group = 'com.github.ihsanbal'
+
+check.dependsOn('checkstyle')
+
+task checkstyle(type: Checkstyle) {
+    configFile = rootProject.file('checkstyle.xml')
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+    classpath = files()
+}
 
 android {
     compileSdkVersion 25
@@ -12,30 +23,16 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0.2"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
 
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
-    testCompile 'junit:junit:4.12'
 }
 
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
