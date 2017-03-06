@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
@@ -18,6 +19,8 @@ import okhttp3.ResponseBody;
  */
 
 public class LoggingInterceptor implements Interceptor {
+
+    private static final String TAG = "LoggingI";
     private final boolean isDebug;
     private Builder builder;
 
@@ -45,12 +48,13 @@ public class LoggingInterceptor implements Interceptor {
         long st = System.nanoTime();
         Response response = chain.proceed(request);
 
+        List<String> segmentList = ((Request) request.tag()).url().encodedPathSegments();
         long chainMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - st);
         String headers = response.headers().toString();
         int code = response.code();
         boolean isSuccessful = response.isSuccessful();
         String bodyString = Logger.getJsonString(response.body().string());
-        Logger.printJsonResponse(builder, chainMs, isSuccessful, code, headers, bodyString);
+        Logger.printJsonResponse(builder, chainMs, isSuccessful, code, headers, bodyString, segmentList);
 
         Request cloneRequest = chain.request();
         MediaType contentType = null;
@@ -67,7 +71,7 @@ public class LoggingInterceptor implements Interceptor {
 
     public static class Builder {
 
-        private static final String TAG_JSON = "LoggingI";
+        private static final String TAG_JSON = TAG;
         private String tag = TAG_JSON;
         private boolean isDebug;
         private int type = Log.DEBUG;
@@ -112,42 +116,65 @@ public class LoggingInterceptor implements Interceptor {
             }
         }
 
+        /**
+         * @param name  Filed
+         * @param value Value
+         * @see Headers
+         * <p>
+         * Add a field with the specified value
+         */
         public Builder addHeader(String name, String value) {
             builder.add(name, value);
             return this;
         }
 
+        /**
+         * @param level set log level
+         * @see Level
+         */
         public Builder setLevel(Level level) {
             this.level = level;
             return this;
         }
 
+        /**
+         * Set request & response each log tag
+         */
         public Builder tag(String tag) {
             this.tag = tag;
             return this;
         }
 
-        public Builder loggable(boolean isDebug) {
-            this.isDebug = isDebug;
-            return this;
-        }
-
-        public LoggingInterceptor build() {
-            return new LoggingInterceptor(this);
-        }
-
-        public Builder log(int type) {
-            this.type = type;
-            return this;
-        }
-
+        /**
+         * Set request log tag
+         */
         public Builder request(String tag) {
             this.requestTag = tag;
             return this;
         }
 
+        /**
+         * Set response log tag
+         */
         public Builder response(String tag) {
             this.responseTag = tag;
+            return this;
+        }
+
+        /**
+         * @param isDebug set can sending log output
+         */
+        public Builder loggable(boolean isDebug) {
+            this.isDebug = isDebug;
+            return this;
+        }
+
+        /**
+         * @param type set sending log output type
+         * @see Log
+         */
+        public Builder log(int type) {
+            this.type = type;
             return this;
         }
 
@@ -158,6 +185,10 @@ public class LoggingInterceptor implements Interceptor {
                     addHeader(names[i].toString(), headers.get(names[i].toString()));
                 }
             }
+        }
+
+        public LoggingInterceptor build() {
+            return new LoggingInterceptor(this);
         }
     }
 
