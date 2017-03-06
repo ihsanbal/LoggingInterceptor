@@ -6,6 +6,7 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import rx.Observable;
 
@@ -22,4 +23,7 @@ public interface Api {
     @POST("post")
     @Headers("Cache-Control: Custom-Max-Value=640000")
     Observable<ResponseBody> post(@Body RequestBody requestBody);
+
+    @PATCH("segment/patch")
+    Observable<ResponseBody> patch();
 }

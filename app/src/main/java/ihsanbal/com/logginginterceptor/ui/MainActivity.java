@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import ihsanbal.com.logginginterceptor.R;
 import ihsanbal.com.logginginterceptor.api.Api;
 import ihsanbal.com.logginginterceptor.base.BaseCompatActivity;
@@ -51,6 +50,14 @@ public class MainActivity extends BaseCompatActivity {
     @OnClick(R.id.button_delete)
     void callDelete() {
         api.delete()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(getSubscriber());
+    }
+
+    @OnClick(R.id.button_patch)
+    void callPatch() {
+        api.patch()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(getSubscriber());
