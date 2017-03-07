@@ -1,7 +1,7 @@
 #LoggingInterceptor
 [![Travis](https://img.shields.io/travis/rust-lang/rust.svg?style=flat-square)](https://travis-ci.org/ihsanbal/LoggingInterceptor)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-LoggingInterceptor-green.svg?style=flat-square)](https://android-arsenal.com/details/1/5342)
-[![API](https://img.shields.io/badge/API-9%2B-brightgreen.svg?style=flat-square)](https://android-arsenal.com/api?level=9)
+[![API](https://img.shields.io/badge/API-9%2B-brightgreen.svg?style=flat-square)](https://developer.android.com/about/versions/android-2.3.html)
 [![SwaggerUI](https://img.shields.io/badge/Swagger-mockable.io-orange.svg?style=flat-square)](https://www.mockable.io/swagger/index.html?url=https%3A%2F%2Fdemo2961085.mockable.io%3Fopenapi#!/demo2961085)
 
 Interceptor for OkHttp3 with pretty logger - [OkHttp3](https://github.com/square/okhttp)
