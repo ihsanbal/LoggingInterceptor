@@ -4,7 +4,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
@@ -20,7 +22,6 @@ import okhttp3.ResponseBody;
 
 public class LoggingInterceptor implements Interceptor {
 
-    private static final String TAG = "LoggingI";
     private final boolean isDebug;
     private Builder builder;
 
@@ -34,9 +35,15 @@ public class LoggingInterceptor implements Interceptor {
         Request request = chain.request();
         if (builder.getHeaders().size() > 0) {
             Headers headers = request.headers();
-            builder.addHeaders(headers);
-            request = chain.request().newBuilder()
-                    .headers(builder.getHeaders()).build();
+            Set<String> names = headers.names();
+            Iterator<String> iterator = names.iterator();
+            Request.Builder requestBuilder = request.newBuilder();
+            requestBuilder.headers(builder.getHeaders());
+            while (iterator.hasNext()) {
+                String name = iterator.next();
+                requestBuilder.addHeader(name, headers.get(name));
+            }
+            request = requestBuilder.build();
         }
 
         if (!isDebug || builder.getLevel() == Level.NONE) {
@@ -50,11 +57,11 @@ public class LoggingInterceptor implements Interceptor {
 
         List<String> segmentList = ((Request) request.tag()).url().encodedPathSegments();
         long chainMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - st);
-        String headers = response.headers().toString();
+        String header = response.headers().toString();
         int code = response.code();
         boolean isSuccessful = response.isSuccessful();
         String bodyString = Logger.getJsonString(response.body().string());
-        Logger.printJsonResponse(builder, chainMs, isSuccessful, code, headers, bodyString, segmentList);
+        Logger.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString, segmentList);
 
         Request cloneRequest = chain.request();
         MediaType contentType = null;
@@ -65,14 +72,9 @@ public class LoggingInterceptor implements Interceptor {
         return response.newBuilder().body(body).build();
     }
 
-    boolean getLoggable() {
-        return isDebug;
-    }
-
     public static class Builder {
 
-        private static final String TAG_JSON = TAG;
-        private String tag = TAG_JSON;
+        private static String TAG = "LoggingI";
         private boolean isDebug;
         private int type = Log.DEBUG;
         private String requestTag;
@@ -88,31 +90,19 @@ public class LoggingInterceptor implements Interceptor {
             return type;
         }
 
-        String getRequestTag() {
-            return requestTag;
-        }
-
-        String getResponseTag() {
-            return responseTag;
-        }
-
-        public Level getLevel() {
+        Level getLevel() {
             return level;
         }
 
-        public String getTag() {
-            return tag;
-        }
-
-        public Headers getHeaders() {
+        Headers getHeaders() {
             return builder.build();
         }
 
         String getTag(boolean isRequest) {
             if (isRequest) {
-                return TextUtils.isEmpty(requestTag) ? tag : requestTag;
+                return TextUtils.isEmpty(requestTag) ? TAG : requestTag;
             } else {
-                return TextUtils.isEmpty(responseTag) ? tag : responseTag;
+                return TextUtils.isEmpty(responseTag) ? TAG : responseTag;
             }
         }
 
@@ -124,7 +114,7 @@ public class LoggingInterceptor implements Interceptor {
          * Add a field with the specified value
          */
         public Builder addHeader(String name, String value) {
-            builder.add(name, value);
+            builder.set(name, value);
             return this;
         }
 
@@ -138,10 +128,10 @@ public class LoggingInterceptor implements Interceptor {
         }
 
         /**
-         * Set request & response each log tag
+         * Set request and response each log tag
          */
         public Builder tag(String tag) {
-            this.tag = tag;
+            TAG = tag;
             return this;
         }
 

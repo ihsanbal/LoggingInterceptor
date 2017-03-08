@@ -5,8 +5,12 @@ import android.util.Log;
 /**
  * @author ihsan on 10/02/2017.
  */
-
 class I {
+
+    protected I() {
+        throw new UnsupportedOperationException();
+    }
+
     static void log(int type, String tag, String msg) {
         switch (type) {
             case Log.VERBOSE:

@@ -63,6 +63,14 @@ public class MainActivity extends BaseCompatActivity {
                 .subscribe(getSubscriber());
     }
 
+    @OnClick(R.id.button_put)
+    void callPut() {
+        api.put()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(getSubscriber());
+    }
+
     public Observer<? super ResponseBody> getSubscriber() {
         return new Observer<ResponseBody>() {
             @Override
@@ -72,7 +80,7 @@ public class MainActivity extends BaseCompatActivity {
 
             @Override
             public void onError(Throwable e) {
-                e.printStackTrace();
+
             }
 
             @Override

@@ -22,13 +22,15 @@ class Logger {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final String DOUBLE_SEPARATOR = LINE_SEPARATOR + LINE_SEPARATOR;
     private static final int MAX_LONG_SIZE = 110;
+    private static final String N = "\n";
+    private static final String T = "\t";
 
-    Logger() {
-        throw new UnsupportedOperationException("you can't instantiate me");
+    protected Logger() {
+        throw new UnsupportedOperationException();
     }
 
     private static boolean isEmpty(String line) {
-        return TextUtils.isEmpty(line) || line.equals("\n") || line.equals("\t") || TextUtils.isEmpty(line.trim());
+        return TextUtils.isEmpty(line) || N.equals(line) || T.equals(line) || TextUtils.isEmpty(line.trim());
     }
 
     static void printJsonRequest(LoggingInterceptor.Builder builder, Request request) {
@@ -77,9 +79,10 @@ class Logger {
         String message;
         boolean loggableHeader = level == Level.HEADERS || level == Level.BASIC;
         String segmentString = slashSegments(segments);
-        message = ((!TextUtils.isEmpty(segmentString) ? segmentString + " - " : "") + "Result is Successful: " + isSuccessful + DOUBLE_SEPARATOR + "Status Code: " +
+        message = ((!TextUtils.isEmpty(segmentString) ? segmentString + " - " : "") + "is success : "
+                + isSuccessful + " - " + "Received in: " + tookMs + "ms" + DOUBLE_SEPARATOR + "Status Code: " +
                 code + DOUBLE_SEPARATOR + (isEmpty(header) ? "" : loggableHeader ? "Headers:" + LINE_SEPARATOR +
-                dotHeaders(header) : "") + LINE_SEPARATOR + "Received in: " + tookMs + "ms");
+                dotHeaders(header) : ""));
         return message.split(LINE_SEPARATOR);
     }
 

@@ -8,6 +8,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import rx.Observable;
 
 /**
@@ -26,4 +27,7 @@ public interface Api {
 
     @PATCH("segment/patch")
     Observable<ResponseBody> patch();
+
+    @PUT("put")
+    Observable<ResponseBody> put();
 }

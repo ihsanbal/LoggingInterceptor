@@ -4,4 +4,5 @@
     <string name="req_get">GET</string>
     <string name="req_delete">DELETE</string>
     <string name="req_patch">PATCH</string>
+    <string name="req_put">PUT</string>
 </resources>
