@@ -33,6 +33,41 @@ task customFindbugs(type: FindBugs) {
     }
 }
 
+def srcJava = 'src/main/java'
+def srcDelomboked = 'build/src-delomboked/main/java'
+
+task delombok {
+    inputs.files file(srcJava)
+    outputs.dir file(srcDelomboked)
+
+    doLast {
+        FileCollection collection = files(configurations.compile)
+        FileCollection sumTree = collection + fileTree(dir: 'bin')
+
+        ant.taskdef(name: 'delombok', classname: 'lombok.delombok.ant.DelombokTask', classpath: 'libs/lombok.jar')
+        ant.delombok(from:srcJava, to:srcDelomboked, classpath: sumTree.asPath)
+    }
+}
+
+android.libraryVariants.all { variant ->
+    task("generate${variant.name.capitalize()}Javadoc", type: Javadoc) {
+        description "Generates Javadoc for $variant.name."
+        setDependsOn(['delombok'])
+        source = srcDelomboked
+        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+        classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
+        options.links("http://docs.oracle.com/javase/7/docs/api/");
+        options.links("http://d.android.com/reference/");
+
+        // exclude generated files
+        exclude '**/BuildConfig.java'
+        exclude '**/R.java'
+
+        // exclude any internal packages
+        exclude '**/com/acme/sdk/api/**'
+    }
+}
+
 
 android {
     compileSdkVersion 25

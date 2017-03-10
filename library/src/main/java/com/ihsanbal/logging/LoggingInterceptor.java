@@ -109,8 +109,7 @@ public class LoggingInterceptor implements Interceptor {
         /**
          * @param name  Filed
          * @param value Value
-         * @see Headers
-         * <p>
+         * @return Builder
          * Add a field with the specified value
          */
         public Builder addHeader(String name, String value) {
@@ -120,6 +119,7 @@ public class LoggingInterceptor implements Interceptor {
 
         /**
          * @param level set log level
+         * @return Builder
          * @see Level
          */
         public Builder setLevel(Level level) {
@@ -129,6 +129,9 @@ public class LoggingInterceptor implements Interceptor {
 
         /**
          * Set request and response each log tag
+         *
+         * @param tag general log tag
+         * @return Builder
          */
         public Builder tag(String tag) {
             TAG = tag;
@@ -137,6 +140,9 @@ public class LoggingInterceptor implements Interceptor {
 
         /**
          * Set request log tag
+         *
+         * @param tag request log tag
+         * @return Builder
          */
         public Builder request(String tag) {
             this.requestTag = tag;
@@ -145,6 +151,9 @@ public class LoggingInterceptor implements Interceptor {
 
         /**
          * Set response log tag
+         *
+         * @param tag response log tag
+         * @return Builder
          */
         public Builder response(String tag) {
             this.responseTag = tag;
@@ -153,6 +162,7 @@ public class LoggingInterceptor implements Interceptor {
 
         /**
          * @param isDebug set can sending log output
+         * @return Builder
          */
         public Builder loggable(boolean isDebug) {
             this.isDebug = isDebug;
@@ -161,6 +171,7 @@ public class LoggingInterceptor implements Interceptor {
 
         /**
          * @param type set sending log output type
+         * @return Builder
          * @see Log
          */
         public Builder log(int type) {
