@@ -179,15 +179,6 @@ public class LoggingInterceptor implements Interceptor {
             return this;
         }
 
-        void addHeaders(Headers headers) {
-            if (headers != null && headers.size() > 0) {
-                Object[] names = headers.names().toArray();
-                for (int i = 0; i < headers.size(); i++) {
-                    addHeader(names[i].toString(), headers.get(names[i].toString()));
-                }
-            }
-        }
-
         public LoggingInterceptor build() {
             return new LoggingInterceptor(this);
         }
