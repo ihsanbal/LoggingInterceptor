@@ -1,4 +1,5 @@
-#LoggingInterceptor
+LoggingInterceptor
+--------
 
 [![Build Status](https://travis-ci.org/ihsanbal/LoggingInterceptor.svg?branch=master)](https://travis-ci.org/ihsanbal/LoggingInterceptor)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-LoggingInterceptor-green.svg?style=flat-square)](https://android-arsenal.com/details/1/5342)
@@ -66,7 +67,8 @@ Maven:
 	    <version>1.0.5</version>
 </dependency>
 ```
-#Tips
+Tips
+--------
 Level
 --------
 	setLevel(Level.BASIC)
@@ -90,7 +92,8 @@ Header
 	addHeader("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 ") // Adding to request
 `<link>` : https://github.com/square/okhttp/wiki/Recipes
 
-#Notes
+Notes
+--------
 Use the filter & configure logcat header for a better result
 
 <p align="left">
