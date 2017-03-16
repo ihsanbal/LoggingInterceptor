@@ -35,7 +35,7 @@ public class NetModule {
         client.addInterceptor(new LoggingInterceptor.Builder()
                 .loggable(BuildConfig.DEBUG)
                 .setLevel(Level.BASIC)
-                .log(Log.ERROR)
+                .log(Log.DEBUG)
                 .tag("LoggingI")
                 .request("Request")
                 .response("Response")
