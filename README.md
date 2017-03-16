@@ -8,7 +8,7 @@
 Interceptor for [OkHttp3](https://github.com/square/okhttp) with pretty logger
 
 <p align="center">
-    <img src="https://github.com/ihsanbal/LoggingInterceptor/blob/master/logging.gif" width="580" height="440"/>
+    <img src="https://github.com/ihsanbal/LoggingInterceptor/blob/master/logging.gif" width="640" height="553"/>
 </p>
 
 Usage
