@@ -43,15 +43,15 @@ Download
 Gradle:
 ```groovy
 allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
 	}
+}
 
 dependencies {
-	    compile 'com.github.ihsanbal:LoggingInterceptor:1.0.5'
-	}
+	compile 'com.github.ihsanbal:LoggingInterceptor:1.0.5'
+}
 ```
 
 Maven:
@@ -71,26 +71,39 @@ Tips
 --------
 Level
 --------
-	setLevel(Level.BASIC)
-		      .NONE // No logs
-		      .BASIC // Logging url,method,headers and body.
-		      .HEADERS // Logging headers
-		      .BODY // Logging body
-Log
+
+```java
+setLevel(Level.BASIC)
+	      .NONE // No logs
+	      .BASIC // Logging url,method,headers and body.
+	      .HEADERS // Logging headers
+	      .BODY // Logging body
+```	
+
+Log - [Log](https://developer.android.com/reference/android/util/Log.html)
 --------
-	loggable(BuildConfig.DEBUG) // enable/disable sending logs output.
-	log(Log.INFO) // setting log type
-`<link>` : https://developer.android.com/reference/android/util/Log.html
+
+```java
+loggable(BuildConfig.DEBUG) // enable/disable sending logs output.
+log(Log.INFO) // setting log type
+```
 
 Tag
 --------
-	tag("LoggingI") // Request & response each log tag
-	request("request") // Request log tag
-	response("response") // Response log tag
-Header
+
+```java
+tag("LoggingI") // Request & response each log tag
+request("request") // Request log tag
+response("response") // Response log tag
+
+```
+	
+Header - [Recipes](https://github.com/square/okhttp/wiki/Recipes)
 --------
-	addHeader("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 ") // Adding to request
-`<link>` : https://github.com/square/okhttp/wiki/Recipes
+
+```java
+addHeader("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 ") // Adding to request
+```
 
 Notes
 --------
