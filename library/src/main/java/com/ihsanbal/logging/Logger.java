@@ -65,6 +65,20 @@ class Logger {
                 "╚═══════════════════════════════════════════════════════════════════════════════════════");
     }
 
+    static void printFileResponse(LoggingInterceptor.Builder builder, long chainMs, boolean isSuccessful,
+                                  int code, String headers, List<String> segments) {
+        String tag = builder.getTag(false);
+        I.log(builder.getType(), tag,
+                "╔══════ Response ═══════════════════════════════════════════════════════════════════════");
+
+        logLines(builder.getType(), tag, getResponse(headers, chainMs, code, isSuccessful,
+                builder.getLevel(), segments));
+        logLines(builder.getType(), tag, new String[]{LINE_SEPARATOR, "File downloaded"});
+        I.log(builder.getType(), tag,
+
+                "╚═══════════════════════════════════════════════════════════════════════════════════════");
+    }
+
     private static String[] getRequest(Request request, Level level) {
         String message;
         String header = request.headers().toString();

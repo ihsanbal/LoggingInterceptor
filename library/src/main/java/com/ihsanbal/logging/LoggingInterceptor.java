@@ -60,14 +60,21 @@ public class LoggingInterceptor implements Interceptor {
         String header = response.headers().toString();
         int code = response.code();
         boolean isSuccessful = response.isSuccessful();
-        String bodyString = Logger.getJsonString(response.body().string());
-        Logger.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString, segmentList);
+        ResponseBody responseBody = response.body();
+        MediaType contentType = responseBody.contentType();
 
-        Request cloneRequest = chain.request();
-        MediaType contentType = null;
-        if (cloneRequest.body() != null)
-            contentType = cloneRequest.body().contentType();
-        ResponseBody body = ResponseBody.create(contentType, bodyString);
+        ResponseBody body;
+        String subtype = contentType.subtype();
+        if (subtype.equalsIgnoreCase("json")
+                || subtype.equalsIgnoreCase("xml")
+                || subtype.equalsIgnoreCase("plain")) {
+            String bodyString = Logger.getJsonString(responseBody.string());
+            Logger.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString, segmentList);
+            body = ResponseBody.create(contentType, bodyString);
+        } else {
+            Logger.printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList);
+            return response;
+        }
 
         return response.newBuilder().body(body).build();
     }

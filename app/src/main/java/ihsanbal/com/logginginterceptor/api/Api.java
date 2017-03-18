@@ -9,6 +9,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Streaming;
 import rx.Observable;
 
 /**
@@ -30,4 +31,8 @@ public interface Api {
 
     @PUT("put")
     Observable<ResponseBody> put();
+
+    @Streaming
+    @GET("http://che.org.il/wp-content/uploads/2016/12/pdf-sample.pdf")
+    Observable<ResponseBody> pdf();
 }
