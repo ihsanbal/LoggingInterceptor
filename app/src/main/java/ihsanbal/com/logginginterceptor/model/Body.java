@@ -6,12 +6,12 @@ import android.support.v4.util.SparseArrayCompat;
  * @author ihsan on 09/02/2017.
  */
 
-public class RequestBody {
+public class Body {
     private String header = "header";
 
     public SparseArrayCompat<Integer> sparseArray;
 
-    public RequestBody() {
+    public Body() {
         sparseArray = new SparseArrayCompat<>(3);
         sparseArray.put(0, 1);
         sparseArray.put(1, 2);
