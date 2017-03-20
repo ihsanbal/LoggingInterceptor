@@ -65,7 +65,7 @@ public class InterceptorsTest {
     }
 
     @Test
-    public void interceptorsFİleTest() {
+    public void interceptorsFileTest() {
         ViewInteraction buttonPost = onView(
                 allOf(withId(R.id.button_pdf), withText("FILE"), isDisplayed()));
         buttonPost.perform(click());

@@ -20,6 +20,7 @@ class Logger {
 
     private static final int JSON_INDENT = 3;
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String[] OMITTED = {LINE_SEPARATOR, "Omitted response body"};
     private static final String DOUBLE_SEPARATOR = LINE_SEPARATOR + LINE_SEPARATOR;
     private static final int MAX_LONG_SIZE = 110;
     private static final String N = "\n";
@@ -42,6 +43,20 @@ class Logger {
         logLines(builder.getType(), tag, getRequest(request, builder.getLevel()));
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
             logLines(builder.getType(), tag, requestBody.split(LINE_SEPARATOR));
+        }
+        I.log(builder.getType(), tag,
+
+                "╚═══════════════════════════════════════════════════════════════════════════════════════");
+    }
+
+    static void printFileRequest(LoggingInterceptor.Builder builder, Request request) {
+        String tag = builder.getTag(true);
+        I.log(builder.getType(), tag,
+                "╔══════ Request ════════════════════════════════════════════════════════════════════════");
+
+        logLines(builder.getType(), tag, getRequest(request, builder.getLevel()));
+        if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
+            logLines(builder.getType(), tag, OMITTED);
         }
         I.log(builder.getType(), tag,
 
@@ -73,7 +88,7 @@ class Logger {
 
         logLines(builder.getType(), tag, getResponse(headers, chainMs, code, isSuccessful,
                 builder.getLevel(), segments));
-        logLines(builder.getType(), tag, new String[]{LINE_SEPARATOR, "File downloaded"});
+        logLines(builder.getType(), tag, OMITTED);
         I.log(builder.getType(), tag,
 
                 "╚═══════════════════════════════════════════════════════════════════════════════════════");

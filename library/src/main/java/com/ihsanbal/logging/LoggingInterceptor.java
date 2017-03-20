@@ -13,6 +13,7 @@ import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -49,8 +50,26 @@ public class LoggingInterceptor implements Interceptor {
         if (!isDebug || builder.getLevel() == Level.NONE) {
             return chain.proceed(request);
         }
+        RequestBody requestBody = request.body();
 
-        Logger.printJsonRequest(builder, request);
+        MediaType rContentType = null;
+        if (requestBody != null) {
+            rContentType = request.body().contentType();
+        }
+
+        String rSubtype = null;
+        if (rContentType != null) {
+            rSubtype = rContentType.subtype();
+        }
+
+        if (rSubtype != null && (rSubtype.contains("json")
+                || rSubtype.contains("xml")
+                || rSubtype.contains("plain")
+                || rSubtype.contains("html"))) {
+            Logger.printJsonRequest(builder, request);
+        } else {
+            Logger.printFileRequest(builder, request);
+        }
 
         long st = System.nanoTime();
         Response response = chain.proceed(request);
@@ -63,11 +82,17 @@ public class LoggingInterceptor implements Interceptor {
         ResponseBody responseBody = response.body();
         MediaType contentType = responseBody.contentType();
 
+        String subtype = null;
         ResponseBody body;
-        String subtype = contentType.subtype();
-        if (subtype.equalsIgnoreCase("json")
-                || subtype.equalsIgnoreCase("xml")
-                || subtype.equalsIgnoreCase("plain")) {
+
+        if (contentType != null) {
+            subtype = contentType.subtype();
+        }
+
+        if (subtype != null && (subtype.contains("json")
+                || subtype.contains("xml")
+                || subtype.contains("plain")
+                || subtype.contains("html"))) {
             String bodyString = Logger.getJsonString(responseBody.string());
             Logger.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString, segmentList);
             body = ResponseBody.create(contentType, bodyString);

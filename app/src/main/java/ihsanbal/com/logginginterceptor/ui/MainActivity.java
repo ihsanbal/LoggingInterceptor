@@ -28,7 +28,10 @@ import butterknife.OnClick;
 import ihsanbal.com.logginginterceptor.R;
 import ihsanbal.com.logginginterceptor.api.Api;
 import ihsanbal.com.logginginterceptor.base.BaseCompatActivity;
-import ihsanbal.com.logginginterceptor.model.RequestBody;
+import ihsanbal.com.logginginterceptor.model.Body;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -39,6 +42,7 @@ public class MainActivity extends BaseCompatActivity {
     @Inject
     Api api;
     private final int PERMISSION_REQUEST_CODE = 1000;
+    private File outputFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +56,7 @@ public class MainActivity extends BaseCompatActivity {
 
     @OnClick(R.id.button_post)
     void callPost() {
-        api.post(new RequestBody())
+        api.post(new Body())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(getSubscriber());
@@ -121,6 +125,47 @@ public class MainActivity extends BaseCompatActivity {
         }
     }
 
+    @OnClick(R.id.button_pdf_upload)
+    void callUpload() {
+        if (outputFile == null) {
+            Toast.makeText(this, "Click 'File' for create file", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("application/pdf"),
+                        outputFile
+                );
+
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("picture", outputFile.getName(), requestFile);
+
+        String descriptionString = "hello, this is description speaking";
+        RequestBody description =
+                RequestBody.create(
+                        okhttp3.MultipartBody.FORM, descriptionString);
+
+        api.post(description, body)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+
+                    }
+                });
+    }
+
     public Observer<? super ResponseBody> getSubscriber() {
         return new Observer<ResponseBody>() {
 
@@ -173,7 +218,7 @@ public class MainActivity extends BaseCompatActivity {
         int count;
         byte data[] = new byte[1024 * 4];
         InputStream bis = new BufferedInputStream(body.byteStream(), 1024 * 8);
-        File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "file.zip");
+        outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "file.zip");
         OutputStream output = new FileOutputStream(outputFile);
         while ((count = bis.read(data)) != -1) {
             output.write(data, 0, count);
