@@ -10,14 +10,7 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 
     lintOptions {
@@ -27,11 +20,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:' + rootProject.ext.supportVersion
     compile 'com.android.support:appcompat-v7:' + rootProject.ext.supportVersion
     compile 'io.reactivex:rxjava:' + rootProject.ext.rxjavaVersion
     compile 'io.reactivex:rxandroid:' + rootProject.ext.rxAndroidVersion
@@ -43,7 +31,12 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:' + rootProject.ext.okhttpVersion
     annotationProcessor 'com.google.dagger:dagger-compiler:' + rootProject.ext.daggerVersion
     annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterKnifeVersion
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:' + rootProject.ext.leakCanaryVersion
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
     provided 'javax.annotation:jsr250-api:1.0'
     compile project(':library')
-    testCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
 }

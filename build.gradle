@@ -25,6 +25,7 @@ ext {
     butterKnifeVersion = '8.4.0'
     daggerVersion = '2.8'
     supportVersion = '25.2.0'
+    leakCanaryVersion = '1.5'
 }
 
 task clean(type: Delete) {

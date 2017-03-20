@@ -22,6 +22,9 @@ before_install:
 script:
 - ./gradlew assembleDebug
 
+after_script:
+- ./gradlew testReleaseUnitTest
+
 branches:
   only:
     - master

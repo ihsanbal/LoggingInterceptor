@@ -6,7 +6,10 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Streaming;
 import rx.Observable;
 
 /**
@@ -22,4 +25,14 @@ public interface Api {
     @POST("post")
     @Headers("Cache-Control: Custom-Max-Value=640000")
     Observable<ResponseBody> post(@Body RequestBody requestBody);
+
+    @PATCH("segment/patch")
+    Observable<ResponseBody> patch();
+
+    @PUT("put")
+    Observable<ResponseBody> put();
+
+    @Streaming
+    @GET("http://che.org.il/wp-content/uploads/2016/12/pdf-sample.pdf")
+    Observable<ResponseBody> pdf();
 }

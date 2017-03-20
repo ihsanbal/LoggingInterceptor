@@ -25,4 +25,21 @@
         android:layout_height="wrap_content"
         android:text="@string/req_delete" />
 
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/button.patch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/req_patch" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/button.put"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/req_put" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/button.pdf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/req_pdf" />
 </LinearLayout>

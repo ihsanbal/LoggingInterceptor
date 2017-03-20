@@ -5,9 +5,13 @@ import android.util.Log;
 /**
  * @author ihsan on 10/02/2017.
  */
-
 class I {
-    static void Log(int type, String tag, String msg) {
+
+    protected I() {
+        throw new UnsupportedOperationException();
+    }
+
+    static void log(int type, String tag, String msg) {
         switch (type) {
             case Log.VERBOSE:
                 Log.v(tag, msg);
@@ -24,7 +28,7 @@ class I {
             case Log.WARN:
                 Log.w(tag, msg);
                 break;
-            case Log.ASSERT:
+            default:
                 Log.wtf(tag, msg);
                 break;
         }
