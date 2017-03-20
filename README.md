@@ -50,7 +50,7 @@ allprojects {
 }
 
 dependencies {
-	compile 'com.github.ihsanbal:LoggingInterceptor:1.0.5'
+	compile 'com.github.ihsanbal:LoggingInterceptor:1.0.6'
 }
 ```
 
@@ -64,7 +64,7 @@ Maven:
 <dependency>
 	    <groupId>com.github.ihsanbal</groupId>
 	    <artifactId>LoggingInterceptor</artifactId>
-	    <version>1.0.5</version>
+	    <version>1.0.6</version>
 </dependency>
 ```
 Tips
