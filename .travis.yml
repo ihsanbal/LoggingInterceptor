@@ -1,12 +1,12 @@
 language: java
 
 jdk:
-  - oraclejdk8
+  - oraclejdk7
 
 addons:
   apt:
     packages:
-      - oracle-java8-installer # Updates JDK 8 to the latest available.
+      - oracle-java7-installer # Updates JDK 7 to the latest available.
 
 notifications:
   email: false
@@ -20,7 +20,7 @@ cache:
 addons:
   apt:
     packages:
-      - oracle-java8-installer
+      - oracle-java7-installer
 
 
 branches:
