@@ -1,7 +1,5 @@
 package com.ihsanbal.logging;
 
-import android.text.TextUtils;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

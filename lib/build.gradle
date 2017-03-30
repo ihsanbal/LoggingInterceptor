@@ -1,0 +1,10 @@
+apply plugin: 'java'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
+    compile 'org.json:json:20141113'
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
