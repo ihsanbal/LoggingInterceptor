@@ -1,29 +1,37 @@
-language: java
+language: android
+
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-25.0.2
+    - android-25
+    - extra-android-m2repository
 
 jdk:
-  - oraclejdk7
-
-addons:
-  apt:
-    packages:
-      - oracle-java7-installer # Updates JDK 7 to the latest available.
+  - oraclejdk8
 
 notifications:
   email: false
 
 sudo: false
 
-cache:
-  directories:
-    - $HOME/.m2
+before_install:
+ - chmod +x gradlew
 
-addons:
-  apt:
-    packages:
-      - oracle-java7-installer
+script:
+- ./gradlew assembleDebug
 
+after_script:
+- ./gradlew testReleaseUnitTest
 
 branches:
   only:
     - master
     - development
+
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle
+
