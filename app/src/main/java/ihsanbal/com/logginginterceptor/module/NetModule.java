@@ -1,7 +1,5 @@
 package ihsanbal.com.logginginterceptor.module;
 
-import android.util.Log;
-
 import com.ihsanbal.logging.Level;
 import com.ihsanbal.logging.LoggingInterceptor;
 
@@ -12,6 +10,7 @@ import dagger.Provides;
 import ihsanbal.com.logginginterceptor.BuildConfig;
 import ihsanbal.com.logginginterceptor.api.Api;
 import okhttp3.OkHttpClient;
+import okhttp3.internal.platform.Platform;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -35,7 +34,7 @@ public class NetModule {
         client.addInterceptor(new LoggingInterceptor.Builder()
                 .loggable(BuildConfig.DEBUG)
                 .setLevel(Level.BASIC)
-                .log(Log.DEBUG)
+                .log(Platform.INFO)
                 .tag("LoggingI")
                 .request("Request")
                 .response("Response")
