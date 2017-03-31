@@ -1,4 +1,14 @@
 apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.github.ihsanbal'
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+repositories {
+    mavenCentral()
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -6,5 +16,3 @@ dependencies {
     compile group: 'org.json', name: 'json', version: '20160810'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
