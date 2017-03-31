@@ -3,7 +3,8 @@ LoggingInterceptor
 
 [![Build Status](https://travis-ci.org/ihsanbal/LoggingInterceptor.svg?branch=master)](https://travis-ci.org/ihsanbal/LoggingInterceptor)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-LoggingInterceptor-green.svg?style=flat-square)](https://android-arsenal.com/details/1/5342)
-[![API](https://img.shields.io/badge/API-9%2B-brightgreen.svg?style=flat-square)](https://developer.android.com/about/versions/android-2.3.html)
+[![API](https://img.shields.io/badge/API-9%2B-brightgreen.svg?style=flat-square)](http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261.html)
+[![JAVA](https://img.shields.io/badge/JAVA-7-brightgreen.svg?style=flat-square)](https://developer.android.com/about/versions/android-2.3.html)
 [![SwaggerUI](https://img.shields.io/badge/Swagger-mockable.io-orange.svg?style=flat-square)](https://www.mockable.io/swagger/index.html?url=https%3A%2F%2Fdemo2961085.mockable.io%3Fopenapi#!/demo2961085)
 
 Interceptor for [OkHttp3](https://github.com/square/okhttp) with pretty logger
@@ -21,7 +22,7 @@ OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.addInterceptor(new LoggingInterceptor.Builder()
                 .loggable(BuildConfig.DEBUG)
                 .setLevel(Level.BASIC)
-                .log(Log.INFO)
+                .log(Platform.INFO)
                 .request("Request")
                 .response("Response")
                 .addHeader("version", BuildConfig.VERSION_NAME)
@@ -50,7 +51,9 @@ allprojects {
 }
 
 dependencies {
-	compile 'com.github.ihsanbal:LoggingInterceptor:1.0.6'
+	compile('com.github.ihsanbal:LoggingInterceptor:2.0.0') {
+        	exclude group: 'org.json', module: 'json'
+    	}
 }
 ```
 
@@ -64,7 +67,7 @@ Maven:
 <dependency>
 	    <groupId>com.github.ihsanbal</groupId>
 	    <artifactId>LoggingInterceptor</artifactId>
-	    <version>1.0.6</version>
+	    <version>2.0.0</version>
 </dependency>
 ```
 Tips
@@ -80,12 +83,12 @@ setLevel(Level.BASIC)
 	      .BODY // Logging body
 ```	
 
-Log - [Log](https://developer.android.com/reference/android/util/Log.html)
+Platform - [Platform](https://github.com/square/okhttp/blob/master/okhttp/src/main/java/okhttp3/internal/platform/Platform.java)
 --------
 
 ```java
 loggable(BuildConfig.DEBUG) // enable/disable sending logs output.
-log(Log.INFO) // setting log type
+log(Platform.WARN) // setting log type
 ```
 
 Tag
