@@ -39,10 +39,11 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseCompatActivity {
 
-    @Inject
-    Api api;
     private final int PERMISSION_REQUEST_CODE = 1000;
     private File outputFile;
+
+    @Inject
+    Api api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,7 +215,6 @@ public class MainActivity extends BaseCompatActivity {
     }
 
     private void downloadFile(ResponseBody body) throws IOException {
-
         int count;
         byte data[] = new byte[1024 * 4];
         InputStream bis = new BufferedInputStream(body.byteStream(), 1024 * 8);
