@@ -39,6 +39,7 @@ public class NetModule {
                 .request("Request")
                 .response("Response")
                 .addHeader("version", BuildConfig.VERSION_NAME)
+//                .logger((level, tag, msg) -> Log.w(tag, msg))
                 .build());
         return client.build();
     }

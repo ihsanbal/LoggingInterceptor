@@ -2,11 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
+    //noinspection GradleDependency
     buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "ihsanbal.com.logginginterceptor"
         minSdkVersion 9
+        //noinspection OldTargetApi
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -21,6 +23,9 @@ android {
 
     lintOptions {
         abortOnError false
+
+        disable 'AllowBackup'
+        disable 'GoogleAppIndexingWarning'
     }
 
 }
