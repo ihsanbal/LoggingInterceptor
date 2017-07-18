@@ -21,7 +21,7 @@ import okhttp3.internal.platform.Platform;
 
 public class LoggingInterceptor implements Interceptor {
 
-    private final boolean isDebug;
+    private boolean isDebug;
     private Builder builder;
 
     private LoggingInterceptor(Builder builder) {
@@ -64,9 +64,9 @@ public class LoggingInterceptor implements Interceptor {
                 || rSubtype.contains("xml")
                 || rSubtype.contains("plain")
                 || rSubtype.contains("html"))) {
-            Logger.printJsonRequest(builder, request);
+            Printer.printJsonRequest(builder, request);
         } else {
-            Logger.printFileRequest(builder, request);
+            Printer.printFileRequest(builder, request);
         }
 
         long st = System.nanoTime();
@@ -91,17 +91,18 @@ public class LoggingInterceptor implements Interceptor {
                 || subtype.contains("xml")
                 || subtype.contains("plain")
                 || subtype.contains("html"))) {
-            String bodyString = Logger.getJsonString(responseBody.string());
-            Logger.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString, segmentList);
+            String bodyString = Printer.getJsonString(responseBody.string());
+            Printer.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString, segmentList);
             body = ResponseBody.create(contentType, bodyString);
         } else {
-            Logger.printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList);
+            Printer.printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList);
             return response;
         }
 
         return response.newBuilder().body(body).build();
     }
 
+    @SuppressWarnings("unused")
     public static class Builder {
 
         private static String TAG = "LoggingI";
@@ -111,6 +112,7 @@ public class LoggingInterceptor implements Interceptor {
         private String responseTag;
         private Level level = Level.BASIC;
         private Headers.Builder builder;
+        private Logger logger;
 
         public Builder() {
             builder = new Headers.Builder();
@@ -134,6 +136,10 @@ public class LoggingInterceptor implements Interceptor {
             } else {
                 return TextUtils.isEmpty(responseTag) ? TAG : responseTag;
             }
+        }
+
+        Logger getLogger() {
+            return logger;
         }
 
         /**
@@ -206,6 +212,16 @@ public class LoggingInterceptor implements Interceptor {
          */
         public Builder log(int type) {
             this.type = type;
+            return this;
+        }
+
+        /**
+         * @param logger manuel logging interface
+         * @return Builder
+         * @see Logger
+         */
+        public Builder logger(Logger logger) {
+            this.logger = logger;
             return this;
         }
 
