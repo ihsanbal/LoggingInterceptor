@@ -26,7 +26,13 @@ OkHttpClient.Builder client = new OkHttpClient.Builder();
                 .request("Request")
                 .response("Response")
                 .addHeader("version", BuildConfig.VERSION_NAME)
-                .build());
+//              .logger(new Logger() {
+//                  @Override
+//                  public void log(int level, String tag, String msg) {
+//                      Log.w(tag, msg);
+//                  }
+//              })
+               .build());
         OkHttpClient okHttpClient = client.build();
 
 //You can use with Retrofit
@@ -51,7 +57,7 @@ allprojects {
 }
 
 dependencies {
-	compile('com.github.ihsanbal:LoggingInterceptor:2.0.0') {
+	compile('com.github.ihsanbal:LoggingInterceptor:2.0.1') {
         	exclude group: 'org.json', module: 'json'
     	}
 }
@@ -67,7 +73,7 @@ Maven:
 <dependency>
 	    <groupId>com.github.ihsanbal</groupId>
 	    <artifactId>LoggingInterceptor</artifactId>
-	    <version>2.0.0</version>
+	    <version>2.0.1</version>
 </dependency>
 ```
 
