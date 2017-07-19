@@ -9,9 +9,63 @@ LoggingInterceptor
 
 Interceptor for [OkHttp3](https://github.com/square/okhttp) with pretty logger
 
-<p align="center">
-    <img src="https://github.com/ihsanbal/LoggingInterceptor/blob/master/logging.gif" width="640" height="553"/>
-</p>
+Logcat
+--------
+```java
+
+ ┌────── Request ────────────────────────────────────────────────────────────────────────
+ │ URL: http://demo2961085.mockable.io/get
+ │ 
+ │ Method: @GET
+ │ 
+ │ Headers:
+ │ ─ version: 1.0
+ │ 
+ │ Omitted request body
+ └───────────────────────────────────────────────────────────────────────────────────────
+ ┌────── Response ───────────────────────────────────────────────────────────────────────
+ │ /get - is success : true - Received in: 811ms
+ │ 
+ │ Status Code: 200
+ │ 
+ │ Headers:
+ │ ┌ version: 1.0.3
+ │ ├ access-control-allow-origin: *
+ │ ├ Content-Type: application/json; charset=UTF-8
+ │ ├ X-Cloud-Trace-Context: 7b1f7ebcf59ee64e7fd8f1e528b29a59
+ │ ├ Date: Wed, 19 Jul 2017 08:11:14 GMT
+ │ ├ Server: Google Frontend
+ │ └ Content-Length: 582
+ │ 
+ │ Body:
+ │ {
+ │    "glossary": {
+ │       "title": "example glossary",
+ │       "GlossDiv": {
+ │          "title": "S",
+ │          "GlossList": {
+ │             "GlossEntry": {
+ │                "ID": "SGML",
+ │                "SortAs": "SGML",
+ │                "GlossTerm": "Standard Generalized Markup Language",
+ │                "Acronym": "SGML",
+ │                "Abbrev": "ISO 8879:1986",
+ │                "GlossDef": {
+ │                   "para": "A meta-markup language, used to create markup languages such as DocBook.",
+ │                   "GlossSeeAlso": [
+ │                      "GML",
+ │                      "XML"
+ │                   ]
+ │                },
+ │                "GlossSee": "markup"
+ │             }
+ │          }
+ │       }
+ │    }
+ │ }
+ └───────────────────────────────────────────────────────────────────────────────────────
+
+```
 
 Usage
 --------
