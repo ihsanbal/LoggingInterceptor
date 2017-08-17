@@ -1,4 +1,4 @@
-LoggingInterceptor
+LoggingInterceptor - Interceptor for [OkHttp3](https://github.com/square/okhttp) with pretty logger
 --------
 
 [![Build Status](https://travis-ci.org/ihsanbal/LoggingInterceptor.svg?branch=master)](https://travis-ci.org/ihsanbal/LoggingInterceptor)
@@ -7,11 +7,84 @@ LoggingInterceptor
 [![JAVA](https://img.shields.io/badge/JAVA-7-brightgreen.svg?style=flat-square)](http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261.html)
 [![SwaggerUI](https://img.shields.io/badge/Swagger-mockable.io-orange.svg?style=flat-square)](https://www.mockable.io/swagger/index.html?url=https%3A%2F%2Fdemo2961085.mockable.io%3Fopenapi#!/demo2961085)
 
-Interceptor for [OkHttp3](https://github.com/square/okhttp) with pretty logger
+Logcat
+--------
+```java
 
-<p align="center">
-    <img src="https://github.com/ihsanbal/LoggingInterceptor/blob/master/logging.gif" width="640" height="553"/>
-</p>
+ ┌────── Request ────────────────────────────────────────────────────────────────────────
+ │ URL: http://demo2961085.mockable.io/post
+ │ 
+ │ Method: @POST
+ │ 
+ │ Headers:
+ │ ┌ version: 1.0
+ │ └ Cache-Control: Custom-Max-Value=640000
+ │ 
+ │ Body:
+ │ {
+ │    "header": "array",
+ │    "sparseArray": {
+ │       "mGarbage": false,
+ │       "mKeys": [
+ │          0,
+ │          1,
+ │          2,
+ │          0,
+ │          0
+ │       ],
+ │       "mSize": 3,
+ │       "mValues": [
+ │          1,
+ │          2,
+ │          3,
+ │          null,
+ │          null
+ │       ]
+ │    }
+ │ }
+ └───────────────────────────────────────────────────────────────────────────────────────
+ ┌────── Response ───────────────────────────────────────────────────────────────────────
+ │ /post - is success : true - Received in: 349ms
+ │ 
+ │ Status Code: 200
+ │ 
+ │ Headers:
+ │ ┌ access-control-allow-origin: *
+ │ ├ Content-Type: application/json; charset=UTF-8
+ │ ├ X-Cloud-Trace-Context: 5ab0ad3fb9d7ae4dca27af3c8ef3905d
+ │ ├ Date: Wed, 19 Jul 2017 08:28:56 GMT
+ │ ├ Server: Google Frontend
+ │ └ Content-Length: 26
+ │ 
+ │ Body:
+ │ {
+ │    "glossary": {
+ │       "title": "example glossary",
+ │       "GlossDiv": {
+ │          "title": "S",
+ │          "GlossList": {
+ │             "GlossEntry": {
+ │                "ID": "SGML",
+ │                "SortAs": "SGML",
+ │                "GlossTerm": "Standard Generalized Markup Language",
+ │                "Acronym": "SGML",
+ │                "Abbrev": "ISO 8879:1986",
+ │                "GlossDef": {
+ │                   "para": "A meta-markup language, used to create markup languages such as DocBook.",
+ │                   "GlossSeeAlso": [
+ │                      "GML",
+ │                      "XML"
+ │                   ]
+ │                },
+ │                "GlossSee": "markup"
+ │             }
+ │          }
+ │       }
+ │    }
+ │ }
+ └───────────────────────────────────────────────────────────────────────────────────────
+
+```
 
 Usage
 --------
