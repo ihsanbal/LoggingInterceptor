@@ -7,13 +7,12 @@ android {
 
     defaultConfig {
         applicationId "ihsanbal.com.logginginterceptor"
-        minSdkVersion 9
+        minSdkVersion 14
         //noinspection OldTargetApi
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
-        jackOptions.enabled true
     }
 
     compileOptions {
@@ -31,22 +30,22 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:' + rootProject.ext.supportVersion
-    compile 'io.reactivex:rxjava:' + rootProject.ext.rxjavaVersion
-    compile 'io.reactivex:rxandroid:' + rootProject.ext.rxAndroidVersion
-    compile 'com.squareup.retrofit2:retrofit:' + rootProject.ext.retrofitVersion
-    compile 'com.squareup.retrofit2:adapter-rxjava:' + rootProject.ext.retrofitRxAdapterVersion
-    compile 'com.google.dagger:dagger:' + rootProject.ext.daggerVersion
-    compile 'com.jakewharton:butterknife:' + rootProject.ext.butterKnifeVersion
-    compile 'com.squareup.retrofit2:converter-gson:' + rootProject.ext.gsonConverterVersion
-    compile 'com.squareup.okhttp3:okhttp:' + rootProject.ext.okhttpVersion
+    implementation 'com.android.support:appcompat-v7:' + rootProject.ext.supportVersion
+    implementation 'io.reactivex:rxjava:' + rootProject.ext.rxjavaVersion
+    implementation 'io.reactivex:rxandroid:' + rootProject.ext.rxAndroidVersion
+    implementation 'com.squareup.retrofit2:retrofit:' + rootProject.ext.retrofitVersion
+    implementation 'com.squareup.retrofit2:adapter-rxjava:' + rootProject.ext.retrofitRxAdapterVersion
+    implementation 'com.google.dagger:dagger:' + rootProject.ext.daggerVersion
+    implementation 'com.jakewharton:butterknife:' + rootProject.ext.butterKnifeVersion
+    implementation 'com.squareup.retrofit2:converter-gson:' + rootProject.ext.gsonConverterVersion
+    implementation 'com.squareup.okhttp3:okhttp:' + rootProject.ext.okhttpVersion
     annotationProcessor 'com.google.dagger:dagger-compiler:' + rootProject.ext.daggerVersion
     annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterKnifeVersion
     debugCompile 'com.squareup.leakcanary:leakcanary-android:' + rootProject.ext.leakCanaryVersion
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
     provided 'javax.annotation:jsr250-api:1.0'
-    compile(project(':lib')) {
+    implementation(project(':lib')) {
         exclude group: 'org.json', module: 'json'
     }
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {

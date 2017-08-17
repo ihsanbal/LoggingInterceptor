@@ -50,14 +50,9 @@ public class LoggingInterceptor implements Interceptor {
         }
         RequestBody requestBody = request.body();
 
-        MediaType rContentType = null;
-        if (requestBody != null) {
-            rContentType = request.body().contentType();
-        }
-
         String rSubtype = null;
-        if (rContentType != null) {
-            rSubtype = rContentType.subtype();
+        if (requestBody != null && requestBody.contentType() != null) {
+            rSubtype = requestBody.contentType().subtype();
         }
 
         if (rSubtype != null && (rSubtype.contains("json")
@@ -71,12 +66,13 @@ public class LoggingInterceptor implements Interceptor {
 
         long st = System.nanoTime();
         Response response = chain.proceed(request);
-
-        List<String> segmentList = ((Request) request.tag()).url().encodedPathSegments();
         long chainMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - st);
+
+        List<String> segmentList = request.url().encodedPathSegments();
         String header = response.headers().toString();
         int code = response.code();
         boolean isSuccessful = response.isSuccessful();
+        String message = response.message();
         ResponseBody responseBody = response.body();
         MediaType contentType = responseBody.contentType();
 
@@ -92,17 +88,17 @@ public class LoggingInterceptor implements Interceptor {
                 || subtype.contains("plain")
                 || subtype.contains("html"))) {
             String bodyString = Printer.getJsonString(responseBody.string());
-            Printer.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString, segmentList);
+            Printer.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString, segmentList, message);
             body = ResponseBody.create(contentType, bodyString);
         } else {
-            Printer.printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList);
+            Printer.printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList, message);
             return response;
         }
 
         return response.newBuilder().body(body).build();
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "SameParameterValue"})
     public static class Builder {
 
         private static String TAG = "LoggingI";
