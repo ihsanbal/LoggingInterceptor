@@ -68,6 +68,29 @@ public class LoggingInterceptor implements Interceptor {
         Response response = chain.proceed(request);
         long chainMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - st);
 
+
+	// check gzip
+        if ("gzip".equalsIgnoreCase(response.header("Content-Encoding")) && HttpHeaders.hasBody(response)) {
+
+            Response.Builder responseBuilder = response.newBuilder()
+                    .request(request);
+
+            // decompress
+            GzipSource responseBody = new GzipSource(response.body().source());
+
+            // remove headers
+            Headers strippedHeaders = response.headers().newBuilder()
+                    .removeAll("Content-Encoding")
+                    .removeAll("Content-Length")
+                    .build();
+            responseBuilder.headers(strippedHeaders);
+            responseBuilder.body(new RealResponseBody(strippedHeaders, Okio.buffer(responseBody)));
+
+            response = responseBuilder.build();
+        }
+
+
+
         List<String> segmentList = request.url().encodedPathSegments();
         String header = response.headers().toString();
         int code = response.code();
