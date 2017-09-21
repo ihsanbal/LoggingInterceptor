@@ -13,7 +13,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.internal.http.HttpHeaders;
+import okhttp3.internal.http.RealResponseBody;
 import okhttp3.internal.platform.Platform;
+import okio.GzipSource;
+import okio.Okio;
 
 /**
  * @author ihsan on 09/02/2017.
@@ -67,6 +71,28 @@ public class LoggingInterceptor implements Interceptor {
         long st = System.nanoTime();
         Response response = chain.proceed(request);
         long chainMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - st);
+
+
+        // check gzip
+        if ("gzip".equalsIgnoreCase(response.header("Content-Encoding")) && HttpHeaders.hasBody(response)) {
+
+            Response.Builder responseBuilder = response.newBuilder()
+                    .request(request);
+
+            // decompress
+            GzipSource responseBody = new GzipSource(response.body().source());
+
+            // remove headers
+            Headers strippedHeaders = response.headers().newBuilder()
+                    .removeAll("Content-Encoding")
+                    .removeAll("Content-Length")
+                    .build();
+            responseBuilder.headers(strippedHeaders);
+            responseBuilder.body(new RealResponseBody(strippedHeaders, Okio.buffer(responseBody)));
+
+            response = responseBuilder.build();
+        }
+
 
         List<String> segmentList = request.url().encodedPathSegments();
         String header = response.headers().toString();
@@ -122,6 +148,16 @@ public class LoggingInterceptor implements Interceptor {
             return level;
         }
 
+        /**
+         * @param level set log level
+         * @return Builder
+         * @see Level
+         */
+        public Builder setLevel(Level level) {
+            this.level = level;
+            return this;
+        }
+
         Headers getHeaders() {
             return builder.build();
         }
@@ -146,16 +182,6 @@ public class LoggingInterceptor implements Interceptor {
          */
         public Builder addHeader(String name, String value) {
             builder.set(name, value);
-            return this;
-        }
-
-        /**
-         * @param level set log level
-         * @return Builder
-         * @see Level
-         */
-        public Builder setLevel(Level level) {
-            this.level = level;
             return this;
         }
 
@@ -227,3 +253,4 @@ public class LoggingInterceptor implements Interceptor {
     }
 
 }
+
