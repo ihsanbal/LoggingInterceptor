@@ -48,47 +48,43 @@ public class LoggingInterceptor implements Interceptor {
         if (!isDebug || builder.getLevel() == Level.NONE) {
             return chain.proceed(request);
         }
-        RequestBody requestBody = request.body();
+        final RequestBody requestBody = request.body();
 
         String rSubtype = null;
         if (requestBody != null && requestBody.contentType() != null) {
             rSubtype = requestBody.contentType().subtype();
         }
 
-        if (rSubtype != null && (rSubtype.contains("json")
-                || rSubtype.contains("xml")
-                || rSubtype.contains("plain")
-                || rSubtype.contains("html"))) {
+        if (isNotFileRequest(rSubtype)) {
             Printer.printJsonRequest(builder, request);
         } else {
             Printer.printFileRequest(builder, request);
         }
 
-        long st = System.nanoTime();
-        Response response = chain.proceed(request);
-        long chainMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - st);
+        final long st = System.nanoTime();
+        final Response response = chain.proceed(request);
+        final long chainMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - st);
 
-        List<String> segmentList = request.url().encodedPathSegments();
-        String header = response.headers().toString();
-        int code = response.code();
-        boolean isSuccessful = response.isSuccessful();
-        String message = response.message();
-        ResponseBody responseBody = response.body();
-        MediaType contentType = responseBody.contentType();
+        final List<String> segmentList = request.url().encodedPathSegments();
+        final String header = response.headers().toString();
+        final int code = response.code();
+        final boolean isSuccessful = response.isSuccessful();
+        final String message = response.message();
+        final ResponseBody responseBody = response.body();
+        final MediaType contentType = responseBody.contentType();
 
         String subtype = null;
-        ResponseBody body;
+        final ResponseBody body;
 
         if (contentType != null) {
             subtype = contentType.subtype();
         }
 
-        if (subtype != null && (subtype.contains("json")
-                || subtype.contains("xml")
-                || subtype.contains("plain")
-                || subtype.contains("html"))) {
-            String bodyString = Printer.getJsonString(responseBody.string());
-            Printer.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString, segmentList, message);
+        if (isNotFileRequest(subtype)) {
+            final String bodyString = Printer.getJsonString(responseBody.string());
+            final String url = response.request().url().toString();
+            Printer.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString,
+                segmentList, message, url);
             body = ResponseBody.create(contentType, bodyString);
         } else {
             Printer.printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList, message);
@@ -96,6 +92,13 @@ public class LoggingInterceptor implements Interceptor {
         }
 
         return response.newBuilder().body(body).build();
+    }
+
+    private boolean isNotFileRequest(final String subtype) {
+        return subtype != null && (subtype.contains("json")
+            || subtype.contains("xml")
+            || subtype.contains("plain")
+            || subtype.contains("html"));
     }
 
     @SuppressWarnings({"unused", "SameParameterValue"})
