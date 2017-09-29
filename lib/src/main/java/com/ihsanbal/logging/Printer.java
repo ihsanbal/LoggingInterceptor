@@ -63,18 +63,27 @@ class Printer {
     }
 
     static void printJsonResponse(LoggingInterceptor.Builder builder, long chainMs, boolean isSuccessful,
-                                  int code, String headers, String bodyString, List<String> segments, String message) {
-        String responseBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + getJsonString(bodyString);
-        String tag = builder.getTag(false);
-        if (builder.getLogger() == null)
+        int code, String headers, String bodyString, List<String> segments, String message, final String responseUrl) {
+        
+        final String responseBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + getJsonString(bodyString);
+        final String tag = builder.getTag(false);
+        final String[] urlLine = { URL_TAG + responseUrl, N };
+        final String[] response = getResponse(headers, chainMs, code, isSuccessful,
+            builder.getLevel(), segments, message);
+
+        if (builder.getLogger() == null) {
             I.log(builder.getType(), tag, RESPONSE_UP_LINE);
-        logLines(builder.getType(), tag, getResponse(headers, chainMs, code, isSuccessful,
-                builder.getLevel(), segments, message), builder.getLogger(), true);
+        }
+
+        logLines(builder.getType(), tag, urlLine, builder.getLogger(), true);
+        logLines(builder.getType(), tag, response, builder.getLogger(), true);
+
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
             logLines(builder.getType(), tag, responseBody.split(LINE_SEPARATOR), builder.getLogger(), true);
         }
-        if (builder.getLogger() == null)
+        if (builder.getLogger() == null) {
             I.log(builder.getType(), tag, END_LINE);
+        }
     }
 
     static void printFileRequest(LoggingInterceptor.Builder builder, Request request) {
@@ -184,7 +193,7 @@ class Printer {
         }
     }
 
-    static String getJsonString(String msg) {
+    static String getJsonString(final String msg) {
         String message;
         try {
             if (msg.startsWith("{")) {
@@ -201,5 +210,4 @@ class Printer {
         }
         return message;
     }
-
 }
