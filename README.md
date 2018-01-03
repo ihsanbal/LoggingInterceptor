@@ -100,6 +100,7 @@ OkHttpClient.Builder client = new OkHttpClient.Builder();
                 .request("Request")
                 .response("Response")
                 .addHeader("version", BuildConfig.VERSION_NAME)
+                .addQueryParam("query", "0")
 //              .logger(new Logger() {
 //                  @Override
 //                  public void log(int level, String tag, String msg) {
@@ -131,7 +132,7 @@ allprojects {
 }
 
 dependencies {
-	compile('com.github.ihsanbal:LoggingInterceptor:2.0.2') {
+	compile('com.github.ihsanbal:LoggingInterceptor:2.0.4') {
         	exclude group: 'org.json', module: 'json'
     	}
 }
@@ -147,7 +148,7 @@ Maven:
 <dependency>
 	    <groupId>com.github.ihsanbal</groupId>
 	    <artifactId>LoggingInterceptor</artifactId>
-	    <version>2.0.2</version>
+	    <version>2.0.4</version>
 </dependency>
 ```
 

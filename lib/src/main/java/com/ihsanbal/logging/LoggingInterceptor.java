@@ -1,12 +1,14 @@
 package com.ihsanbal.logging;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.Request;
@@ -32,12 +34,16 @@ public class LoggingInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        if (builder.getHeaders().size() > 0) {
+        HashMap<String, String> headerMap = builder.getHeaders();
+        if (headerMap.size() > 0) {
             Headers headers = request.headers();
             Set<String> names = headers.names();
             Iterator<String> iterator = names.iterator();
             Request.Builder requestBuilder = request.newBuilder();
-            requestBuilder.headers(builder.getHeaders());
+            for (String key : headerMap.keySet()) {
+                String value = headerMap.get(key);
+                requestBuilder.addHeader(key, value);
+            }
             while (iterator.hasNext()) {
                 String name = iterator.next();
                 requestBuilder.addHeader(name, headers.get(name));
@@ -45,9 +51,20 @@ public class LoggingInterceptor implements Interceptor {
             request = requestBuilder.build();
         }
 
+        HashMap<String, String> queryMap = builder.getHttpUrl();
+        if (queryMap.size() > 0) {
+            HttpUrl.Builder httpUrlBuilder = request.url().newBuilder(request.url().toString());
+            for (String key : queryMap.keySet()) {
+                String value = queryMap.get(key);
+                httpUrlBuilder.addQueryParameter(key, value);
+            }
+            request = request.newBuilder().url(httpUrlBuilder.build()).build();
+        }
+
         if (!isDebug || builder.getLevel() == Level.NONE) {
             return chain.proceed(request);
         }
+
         final RequestBody requestBody = request.body();
 
         String rSubtype = null;
@@ -84,21 +101,23 @@ public class LoggingInterceptor implements Interceptor {
             final String bodyString = Printer.getJsonString(responseBody.string());
             final String url = response.request().url().toString();
             Printer.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString,
-                segmentList, message, url);
+                    segmentList, message, url);
             body = ResponseBody.create(contentType, bodyString);
         } else {
             Printer.printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList, message);
             return response;
         }
 
-        return response.newBuilder().body(body).build();
+        return response.newBuilder().
+                body(body).
+                build();
     }
 
     private boolean isNotFileRequest(final String subtype) {
         return subtype != null && (subtype.contains("json")
-            || subtype.contains("xml")
-            || subtype.contains("plain")
-            || subtype.contains("html"));
+                || subtype.contains("xml")
+                || subtype.contains("plain")
+                || subtype.contains("html"));
     }
 
     @SuppressWarnings({"unused", "SameParameterValue"})
@@ -110,11 +129,13 @@ public class LoggingInterceptor implements Interceptor {
         private String requestTag;
         private String responseTag;
         private Level level = Level.BASIC;
-        private Headers.Builder builder;
         private Logger logger;
+        private final HashMap<String, String> headers;
+        private final HashMap<String, String> queries;
 
         public Builder() {
-            builder = new Headers.Builder();
+            headers = new HashMap<>();
+            queries = new HashMap<>();
         }
 
         int getType() {
@@ -125,8 +146,12 @@ public class LoggingInterceptor implements Interceptor {
             return level;
         }
 
-        Headers getHeaders() {
-            return builder.build();
+        HashMap<String, String> getHeaders() {
+            return headers;
+        }
+
+        HashMap<String, String> getHttpUrl() {
+            return queries;
         }
 
         String getTag(boolean isRequest) {
@@ -148,7 +173,18 @@ public class LoggingInterceptor implements Interceptor {
          * Add a field with the specified value
          */
         public Builder addHeader(String name, String value) {
-            builder.set(name, value);
+            headers.put(name, value);
+            return this;
+        }
+
+        /**
+         * @param name  Filed
+         * @param value Value
+         * @return Builder
+         * Add a field with the specified value
+         */
+        public Builder addQueryParam(String name, String value) {
+            queries.put(name, value);
             return this;
         }
 

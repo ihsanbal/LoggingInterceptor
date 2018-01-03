@@ -81,7 +81,7 @@ public class MainActivity extends BaseCompatActivity {
 
     @OnClick(R.id.button_patch)
     void callPatch() {
-        api.patch()
+        api.patch("q2")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(getSubscriber());

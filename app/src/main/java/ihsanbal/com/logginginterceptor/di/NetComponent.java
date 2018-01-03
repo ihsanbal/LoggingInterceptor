@@ -1,9 +1,9 @@
-package ihsanbal.com.logginginterceptor.component;
+package ihsanbal.com.logginginterceptor.di;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
-import ihsanbal.com.logginginterceptor.module.NetModule;
+import ihsanbal.com.logginginterceptor.di.NetModule;
 import ihsanbal.com.logginginterceptor.ui.MainActivity;
 
 /**

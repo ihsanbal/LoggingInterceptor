@@ -1,4 +1,4 @@
-package ihsanbal.com.logginginterceptor.module;
+package ihsanbal.com.logginginterceptor.di;
 
 import com.ihsanbal.logging.Level;
 import com.ihsanbal.logging.LoggingInterceptor;
@@ -39,6 +39,7 @@ public class NetModule {
                 .request("Request")
                 .response("Response")
                 .addHeader("version", BuildConfig.VERSION_NAME)
+                .addQueryParam("query", "0")
 //                .logger((level, tag, msg) -> Log.w(tag, msg))
                 .build());
         return client.build();

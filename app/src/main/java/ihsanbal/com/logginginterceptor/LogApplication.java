@@ -4,9 +4,9 @@ import android.app.Application;
 
 import com.squareup.leakcanary.LeakCanary;
 
-import ihsanbal.com.logginginterceptor.component.DaggerNetComponent;
-import ihsanbal.com.logginginterceptor.component.NetComponent;
-import ihsanbal.com.logginginterceptor.module.NetModule;
+import ihsanbal.com.logginginterceptor.di.DaggerNetComponent;
+import ihsanbal.com.logginginterceptor.di.NetComponent;
+import ihsanbal.com.logginginterceptor.di.NetModule;
 
 /**
  * @author ihsan on 09/02/2017.

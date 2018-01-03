@@ -4,8 +4,8 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-        classpath 'com.android.tools.build:gradle:3.0.0-beta6'
+        //noinspection
+        classpath 'com.android.tools.build:gradle:3.0.1'
     }
 }
 
@@ -13,6 +13,7 @@ allprojects {
     repositories {
         jcenter()
         maven { url 'https://jitpack.io' }
+        google()
     }
 }
 
@@ -25,7 +26,7 @@ ext {
     rxAndroidVersion = '1.0.1'
     butterKnifeVersion = '8.4.0'
     daggerVersion = '2.8'
-    supportVersion = '25.2.0'
+    supportVersion = '26.1.0'
     leakCanaryVersion = '1.5'
 }
 

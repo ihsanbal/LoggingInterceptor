@@ -12,6 +12,7 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
+import retrofit2.http.Query;
 import retrofit2.http.Streaming;
 import rx.Observable;
 
@@ -25,12 +26,12 @@ public interface Api {
     @DELETE("delete")
     Observable<ResponseBody> delete();
 
-    @POST("post")
+    @POST("post?query=q")
     @Headers("Cache-Control: Custom-Max-Value=640000")
     Observable<ResponseBody> post(@retrofit2.http.Body Body requestBody);
 
     @PATCH("segment/patch")
-    Observable<ResponseBody> patch();
+    Observable<ResponseBody> patch(@Query("query") String q);
 
     @PUT("put")
     Observable<ResponseBody> put();
