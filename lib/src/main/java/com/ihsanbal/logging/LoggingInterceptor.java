@@ -124,7 +124,7 @@ public class LoggingInterceptor implements Interceptor {
     public static class Builder {
 
         private static String TAG = "LoggingI";
-        private boolean isDebug;
+        private boolean isDebug = true;
         private int type = Platform.INFO;
         private String requestTag;
         private String responseTag;
