@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
@@ -23,8 +24,8 @@ import okhttp3.internal.platform.Platform;
 
 public class LoggingInterceptor implements Interceptor {
 
-    private boolean isDebug;
-    private Builder builder;
+    private final boolean isDebug;
+    private final Builder builder;
 
     private LoggingInterceptor(Builder builder) {
         this.builder = builder;
@@ -72,10 +73,20 @@ public class LoggingInterceptor implements Interceptor {
             rSubtype = requestBody.contentType().subtype();
         }
 
+        Executor executor = builder.executor;
+
         if (isNotFileRequest(rSubtype)) {
-            Printer.printJsonRequest(builder, request);
+            if (executor != null) {
+                executor.execute(createPrintJsonRequestRunnable(builder, request));
+            } else {
+                Printer.printJsonRequest(builder, request);
+            }
         } else {
-            Printer.printFileRequest(builder, request);
+            if (executor != null) {
+                executor.execute(createFileRequestRunnable(builder, request));
+            } else {
+                Printer.printFileRequest(builder, request);
+            }
         }
 
         final long st = System.nanoTime();
@@ -100,11 +111,21 @@ public class LoggingInterceptor implements Interceptor {
         if (isNotFileRequest(subtype)) {
             final String bodyString = Printer.getJsonString(responseBody.string());
             final String url = response.request().url().toString();
-            Printer.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString,
-                    segmentList, message, url);
+
+            if (executor != null) {
+                executor.execute(createPrintJsonResponseRunnable(builder, chainMs, isSuccessful, code, header, bodyString,
+                        segmentList, message, url));
+            } else {
+                Printer.printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString,
+                        segmentList, message, url);
+            }
             body = ResponseBody.create(contentType, bodyString);
         } else {
-            Printer.printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList, message);
+            if (executor != null) {
+                executor.execute(createFileResponseRunnable(builder, chainMs, isSuccessful, code, header, segmentList, message));
+            } else {
+                Printer.printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList, message);
+            }
             return response;
         }
 
@@ -120,18 +141,57 @@ public class LoggingInterceptor implements Interceptor {
                 || subtype.contains("html"));
     }
 
+    private static Runnable createPrintJsonRequestRunnable(final LoggingInterceptor.Builder builder, final Request request) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Printer.printJsonRequest(builder, request);
+            }
+        };
+    }
+
+    private static Runnable createFileRequestRunnable(final LoggingInterceptor.Builder builder, final Request request) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Printer.printFileRequest(builder, request);
+            }
+        };
+    }
+
+    private static Runnable createPrintJsonResponseRunnable(final LoggingInterceptor.Builder builder, final long chainMs, final boolean isSuccessful,
+                                                            final int code, final String headers, final String bodyString, final List<String> segments, final String message, final String responseUrl) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Printer.printJsonResponse(builder, chainMs, isSuccessful, code, headers, bodyString, segments, message, responseUrl);
+            }
+        };
+    }
+
+    private static Runnable createFileResponseRunnable(final LoggingInterceptor.Builder builder, final long chainMs, final boolean isSuccessful,
+                                                       final int code, final String headers, final List<String> segments, final String message) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Printer.printFileResponse(builder, chainMs, isSuccessful, code, headers, segments, message);
+            }
+        };
+    }
+
     @SuppressWarnings({"unused", "SameParameterValue"})
     public static class Builder {
 
         private static String TAG = "LoggingI";
+        private final HashMap<String, String> headers;
+        private final HashMap<String, String> queries;
         private boolean isDebug;
         private int type = Platform.INFO;
         private String requestTag;
         private String responseTag;
         private Level level = Level.BASIC;
         private Logger logger;
-        private final HashMap<String, String> headers;
-        private final HashMap<String, String> queries;
+        private Executor executor;
 
         public Builder() {
             headers = new HashMap<>();
@@ -144,6 +204,16 @@ public class LoggingInterceptor implements Interceptor {
 
         Level getLevel() {
             return level;
+        }
+
+        /**
+         * @param level set log level
+         * @return Builder
+         * @see Level
+         */
+        public Builder setLevel(Level level) {
+            this.level = level;
+            return this;
         }
 
         HashMap<String, String> getHeaders() {
@@ -166,6 +236,10 @@ public class LoggingInterceptor implements Interceptor {
             return logger;
         }
 
+        Executor getExecutor() {
+            return executor;
+        }
+
         /**
          * @param name  Filed
          * @param value Value
@@ -185,16 +259,6 @@ public class LoggingInterceptor implements Interceptor {
          */
         public Builder addQueryParam(String name, String value) {
             queries.put(name, value);
-            return this;
-        }
-
-        /**
-         * @param level set log level
-         * @return Builder
-         * @see Level
-         */
-        public Builder setLevel(Level level) {
-            this.level = level;
             return this;
         }
 
@@ -257,6 +321,16 @@ public class LoggingInterceptor implements Interceptor {
          */
         public Builder logger(Logger logger) {
             this.logger = logger;
+            return this;
+        }
+
+        /**
+         * @param executor manual executor for printing
+         * @return Builder
+         * @see Logger
+         */
+        public Builder executor(Executor executor) {
+            this.executor = executor;
             return this;
         }
 

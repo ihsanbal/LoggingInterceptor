@@ -3,6 +3,8 @@ package ihsanbal.com.logginginterceptor.di;
 import com.ihsanbal.logging.Level;
 import com.ihsanbal.logging.LoggingInterceptor;
 
+import java.util.concurrent.Executors;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -35,12 +37,10 @@ public class NetModule {
                 .loggable(BuildConfig.DEBUG)
                 .setLevel(Level.BASIC)
                 .log(Platform.INFO)
-                .tag("LoggingI")
-                .request("Request")
-                .response("Response")
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .addQueryParam("query", "0")
-//                .logger((level, tag, msg) -> Log.w(tag, msg))
+//              .logger((level, tag, msg) -> Log.w(tag, msg))
+//              .executor(Executors.newSingleThreadExecutor())
                 .build());
         return client.build();
     }

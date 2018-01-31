@@ -7,4 +7,5 @@
     <string name="req_put">PUT</string>
     <string name="req_pdf">FILE</string>
     <string name="req_pdf_upload">UPLOAD</string>
+    <string name="req_zip">ZIP</string>
 </resources>

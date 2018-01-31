@@ -33,6 +33,14 @@ public class InterceptorsTest {
     }
 
     @Test
+    public void interceptorsZipTest() {
+        ViewInteraction buttonPost = onView(
+                allOf(withId(R.id.button_zip), withText("ZIP"), isDisplayed()));
+        buttonPost.perform(click());
+        buttonPost.check(matches(isDisplayed()));
+    }
+
+    @Test
     public void interceptorsGetTest() {
         ViewInteraction buttonPost = onView(
                 allOf(withId(R.id.button_get), withText("GET"), isDisplayed()));

@@ -14,6 +14,12 @@
         android:text="@string/req_post" />
 
     <android.support.v7.widget.AppCompatButton
+        android:id="@+id/button.zip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/req_zip" />
+
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/button.get"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

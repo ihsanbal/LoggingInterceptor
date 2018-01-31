@@ -107,6 +107,7 @@ OkHttpClient.Builder client = new OkHttpClient.Builder();
 //                      Log.w(tag, msg);
 //                  }
 //              })
+//              .executor(Executors.newSingleThreadExecutor())
                .build());
         OkHttpClient okHttpClient = client.build();
 
@@ -151,6 +152,11 @@ Maven:
 	    <version>2.0.4</version>
 </dependency>
 ```
+
+
+Executor
+--------
+Add executor for allows to perform sequential concurrent print.
 
 Level
 --------
