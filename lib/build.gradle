@@ -15,6 +15,6 @@ repositories {
 
 dependencies {
     implementation group: 'org.json', name: 'json', version: '20160810'
-    implementation group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.6.0'
+    implementation group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.9.1'
 }
 
