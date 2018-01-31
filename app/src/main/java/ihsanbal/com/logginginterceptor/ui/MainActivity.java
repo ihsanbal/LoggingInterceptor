@@ -33,6 +33,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -61,6 +62,17 @@ public class MainActivity extends BaseCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(getSubscriber());
+    }
+
+    @OnClick(R.id.button_zip)
+    void callZip() {
+        Observable<ResponseBody> observablePost = api.post(new Body())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
+        Observable<ResponseBody> observableGet = api.get()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
+        Observable.zip(observablePost, observableGet, (o, o1) -> o).subscribe(getSubscriber());
     }
 
     @OnClick(R.id.button_get)

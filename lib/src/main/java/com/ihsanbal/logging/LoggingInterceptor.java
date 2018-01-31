@@ -32,44 +32,6 @@ public class LoggingInterceptor implements Interceptor {
         this.isDebug = builder.isDebug;
     }
 
-    private static Runnable createPrintJsonRequestRunnable(final LoggingInterceptor.Builder builder, final Request request) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                Printer.printJsonRequest(builder, request);
-            }
-        };
-    }
-
-    private static Runnable createFileRequestRunnable(final LoggingInterceptor.Builder builder, final Request request) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                Printer.printFileRequest(builder, request);
-            }
-        };
-    }
-
-    private static Runnable createPrintJsonResponseRunnable(final LoggingInterceptor.Builder builder, final long chainMs, final boolean isSuccessful,
-                                                            final int code, final String headers, final String bodyString, final List<String> segments, final String message, final String responseUrl) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                Printer.printJsonResponse(builder, chainMs, isSuccessful, code, headers, bodyString, segments, message, responseUrl);
-            }
-        };
-    }
-
-    private static Runnable createFileResponseRunnable(final LoggingInterceptor.Builder builder, final long chainMs, final boolean isSuccessful,
-                                                       final int code, final String headers, final List<String> segments, final String message) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                Printer.printFileResponse(builder, chainMs, isSuccessful, code, headers, segments, message);
-            }
-        };
-    }
-
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
@@ -177,6 +139,44 @@ public class LoggingInterceptor implements Interceptor {
                 || subtype.contains("xml")
                 || subtype.contains("plain")
                 || subtype.contains("html"));
+    }
+
+    private static Runnable createPrintJsonRequestRunnable(final LoggingInterceptor.Builder builder, final Request request) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Printer.printJsonRequest(builder, request);
+            }
+        };
+    }
+
+    private static Runnable createFileRequestRunnable(final LoggingInterceptor.Builder builder, final Request request) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Printer.printFileRequest(builder, request);
+            }
+        };
+    }
+
+    private static Runnable createPrintJsonResponseRunnable(final LoggingInterceptor.Builder builder, final long chainMs, final boolean isSuccessful,
+                                                            final int code, final String headers, final String bodyString, final List<String> segments, final String message, final String responseUrl) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Printer.printJsonResponse(builder, chainMs, isSuccessful, code, headers, bodyString, segments, message, responseUrl);
+            }
+        };
+    }
+
+    private static Runnable createFileResponseRunnable(final LoggingInterceptor.Builder builder, final long chainMs, final boolean isSuccessful,
+                                                       final int code, final String headers, final List<String> segments, final String message) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Printer.printFileResponse(builder, chainMs, isSuccessful, code, headers, segments, message);
+            }
+        };
     }
 
     @SuppressWarnings({"unused", "SameParameterValue"})
