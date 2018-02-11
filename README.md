@@ -121,7 +121,9 @@ addHeader("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 ") // Adding to request
 
 Notes
 --------
-Use the filter & configure logcat header for a better result
+Some tips about log at this blog post: [“The way to get faster on development.”](https://medium.com/@ihsanbal/the-way-to-get-faster-on-development-9d7b23ef8c10)
+
+Also use the filter & configure logcat header for a better result
 
 <p align="left">
     <img src="https://github.com/ihsanbal/LoggingInterceptor/blob/master/images/screen_shot_5.png" width="280" height="155"/>
