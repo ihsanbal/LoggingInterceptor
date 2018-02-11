@@ -8,8 +8,6 @@ LoggingInterceptor - Interceptor for [OkHttp3](https://github.com/square/okhttp)
 [![JAVA](https://img.shields.io/badge/JAVA-7-brightgreen.svg?style=flat-square)](http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261.html)
 [![SwaggerUI](https://img.shields.io/badge/Swagger-mockable.io-orange.svg?style=flat-square)](https://www.mockable.io/swagger/index.html?url=https%3A%2F%2Fdemo2961085.mockable.io%3Fopenapi#!/demo2961085)
 
-Logcat
---------
 <p align="center">
     <img src="https://github.com/ihsanbal/LoggingInterceptor/blob/master/images/logcat.png"/>
 </p>
