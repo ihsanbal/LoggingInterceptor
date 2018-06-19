@@ -1,18 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     //noinspection GradleDependency
-    buildToolsVersion "26.0.2"
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "ihsanbal.com.logginginterceptor"
         minSdkVersion 14
         //noinspection OldTargetApi
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -41,14 +41,14 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:' + rootProject.ext.okhttpVersion
     annotationProcessor 'com.google.dagger:dagger-compiler:' + rootProject.ext.daggerVersion
     annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterKnifeVersion
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:' + rootProject.ext.leakCanaryVersion
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
-    provided 'javax.annotation:jsr250-api:1.0'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:' + rootProject.ext.leakCanaryVersion
+    releaseApi 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
+    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
+    compileOnly 'javax.annotation:jsr250-api:1.0'
     implementation (project(':lib')) {
         exclude group: 'org.json', module: 'json'
     }
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 }
