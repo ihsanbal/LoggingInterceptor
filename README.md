@@ -58,7 +58,7 @@ allprojects {
 }
 
 dependencies {
-	compile('com.github.ihsanbal:LoggingInterceptor:2.0.5') {
+	compile('com.github.ihsanbal:LoggingInterceptor:2.0.6') {
         	exclude group: 'org.json', module: 'json'
     	}
 }
@@ -74,7 +74,7 @@ Maven:
 <dependency>
 	    <groupId>com.github.ihsanbal</groupId>
 	    <artifactId>LoggingInterceptor</artifactId>
-	    <version>2.0.5</version>
+	    <version>2.0.6</version>
 </dependency>
 ```
 
