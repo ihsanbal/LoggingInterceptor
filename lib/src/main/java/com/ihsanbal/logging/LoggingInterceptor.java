@@ -2,13 +2,10 @@ package com.ihsanbal.logging;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -37,17 +34,10 @@ public class LoggingInterceptor implements Interceptor {
         Request request = chain.request();
         HashMap<String, String> headerMap = builder.getHeaders();
         if (headerMap.size() > 0) {
-            Headers headers = request.headers();
-            Set<String> names = headers.names();
-            Iterator<String> iterator = names.iterator();
             Request.Builder requestBuilder = request.newBuilder();
             for (String key : headerMap.keySet()) {
                 String value = headerMap.get(key);
                 requestBuilder.addHeader(key, value);
-            }
-            while (iterator.hasNext()) {
-                String name = iterator.next();
-                requestBuilder.addHeader(name, headers.get(name));
             }
             request = requestBuilder.build();
         }
