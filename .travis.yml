@@ -29,6 +29,7 @@ branches:
   only:
     - master
     - development
+    - 3.0
 
 cache:
   directories:
