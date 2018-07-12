@@ -63,13 +63,13 @@ class Printer {
     }
 
     static void printJsonResponse(LoggingInterceptor.Builder builder, long chainMs, boolean isSuccessful,
-        int code, String headers, String bodyString, List<String> segments, String message, final String responseUrl) {
-        
+                                  int code, String headers, String bodyString, List<String> segments, String message, final String responseUrl) {
+
         final String responseBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + getJsonString(bodyString);
         final String tag = builder.getTag(false);
-        final String[] urlLine = { URL_TAG + responseUrl, N };
+        final String[] urlLine = {URL_TAG + responseUrl, N};
         final String[] response = getResponse(headers, chainMs, code, isSuccessful,
-            builder.getLevel(), segments, message);
+                builder.getLevel(), segments, message);
 
         if (builder.getLogger() == null) {
             I.log(builder.getType(), tag, RESPONSE_UP_LINE);
@@ -180,6 +180,7 @@ class Printer {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     private static String bodyToString(final Request request) {
         try {
             final Request copy = request.newBuilder().build();

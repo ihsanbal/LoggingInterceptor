@@ -45,7 +45,7 @@ dependencies {
     releaseApi 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
     compileOnly 'javax.annotation:jsr250-api:1.0'
-    implementation (project(':lib')) {
+    implementation(project(':lib')) {
         exclude group: 'org.json', module: 'json'
     }
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

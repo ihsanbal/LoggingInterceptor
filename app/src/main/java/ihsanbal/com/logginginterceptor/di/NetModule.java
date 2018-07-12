@@ -3,8 +3,6 @@ package ihsanbal.com.logginginterceptor.di;
 import com.ihsanbal.logging.Level;
 import com.ihsanbal.logging.LoggingInterceptor;
 
-import java.util.concurrent.Executors;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -35,7 +33,7 @@ public class NetModule {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.addInterceptor(new LoggingInterceptor.Builder()
                 .loggable(BuildConfig.DEBUG)
-                .setLevel(Level.BASIC)
+                .level(Level.BASIC)
                 .log(Platform.INFO)
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .addQueryParam("query", "0")

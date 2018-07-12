@@ -21,7 +21,7 @@ ext {
     retrofitVersion = '2.1.0'
     retrofitRxAdapterVersion = '2.1.0'
     gsonConverterVersion = '2.1.0'
-    okhttpVersion = '3.6.0'
+    okhttpVersion = '3.10.0'
     rxjavaVersion = '1.0.10'
     rxAndroidVersion = '1.0.1'
     butterKnifeVersion = '8.4.0'
