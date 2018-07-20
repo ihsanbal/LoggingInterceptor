@@ -2,11 +2,15 @@ package ihsanbal.com.logginginterceptor.di;
 
 import com.ihsanbal.logging.Level;
 import com.ihsanbal.logging.LoggingInterceptor;
+
+import java.util.concurrent.Executors;
+
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import ihsanbal.com.logginginterceptor.BuildConfig;
 import ihsanbal.com.logginginterceptor.api.Api;
-import javax.inject.Singleton;
 import okhttp3.OkHttpClient;
 import okhttp3.internal.platform.Platform;
 import retrofit2.Retrofit;
@@ -19,11 +23,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class NetModule {
 
-  private String mEndPoint;
+    private String mEndPoint;
 
-  public NetModule(String endpoint) {
-    mEndPoint = endpoint;
-  }
+    public NetModule(String endpoint) {
+        mEndPoint = endpoint;
+    }
 
     @Provides
     @Singleton
@@ -35,27 +39,27 @@ public class NetModule {
                 .log(Platform.INFO)
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .addQueryParam("query", "0")
-                .useAndroidStudio_v3_LogsHack(true)
-//              .logger((level, tag, msg) -> Log.w(tag, msg))
-//              .executor(Executors.newSingleThreadExecutor())
+                .enableAndroidStudio_v3_LogsHack(true)
+//                .logger((level, tag, msg) -> Log.w(tag, msg))
+                .executor(Executors.newSingleThreadExecutor())
                 .build());
         return client.build();
     }
 
-  @Provides
-  @Singleton
-  Retrofit provideRetrofit(OkHttpClient okHttpClient) {
-    return new Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-        .baseUrl(mEndPoint)
-        .client(okHttpClient)
-        .build();
-  }
+    @Provides
+    @Singleton
+    Retrofit provideRetrofit(OkHttpClient okHttpClient) {
+        return new Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .baseUrl(mEndPoint)
+                .client(okHttpClient)
+                .build();
+    }
 
-  @Provides
-  @Singleton
-  Api provideApi(Retrofit retrofit) {
-    return retrofit.create(Api.class);
-  }
+    @Provides
+    @Singleton
+    Api provideApi(Retrofit retrofit) {
+        return retrofit.create(Api.class);
+    }
 }

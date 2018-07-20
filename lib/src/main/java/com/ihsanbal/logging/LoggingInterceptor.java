@@ -175,7 +175,7 @@ public class LoggingInterceptor implements Interceptor {
         private static String TAG = "LoggingI";
         private final HashMap<String, String> headers;
         private final HashMap<String, String> queries;
-        private boolean useLogHack = false;
+        private boolean isLogHackEnable = false;
         private boolean isDebug;
         private int type = Platform.INFO;
         private String requestTag;
@@ -231,8 +231,8 @@ public class LoggingInterceptor implements Interceptor {
             return executor;
         }
 
-        boolean shouldUseLogHack() {
-          return useLogHack;
+        boolean isLogHackEnable() {
+          return isLogHackEnable;
         }
 
       /**
@@ -338,8 +338,8 @@ public class LoggingInterceptor implements Interceptor {
          * @return Builder
          * @see Logger
          * */
-        public Builder useAndroidStudio_v3_LogsHack(final boolean useHack) {
-          useLogHack = useHack;
+        public Builder enableAndroidStudio_v3_LogsHack(final boolean useHack) {
+          isLogHackEnable = useHack;
           return this;
         }
 

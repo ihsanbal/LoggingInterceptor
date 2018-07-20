@@ -52,14 +52,14 @@ class Printer {
         String requestBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + bodyToString(request);
         String tag = builder.getTag(true);
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, REQUEST_UP_LINE, builder.shouldUseLogHack());
-        logLines(builder.getType(), tag, new String[]{URL_TAG + request.url()}, builder.getLogger(), false, builder.shouldUseLogHack());
-        logLines(builder.getType(), tag, getRequest(request, builder.getLevel()), builder.getLogger(), true, builder.shouldUseLogHack());
+            I.log(builder.getType(), tag, REQUEST_UP_LINE, builder.isLogHackEnable());
+        logLines(builder.getType(), tag, new String[]{URL_TAG + request.url()}, builder.getLogger(), false, builder.isLogHackEnable());
+        logLines(builder.getType(), tag, getRequest(request, builder.getLevel()), builder.getLogger(), true, builder.isLogHackEnable());
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
-            logLines(builder.getType(), tag, requestBody.split(LINE_SEPARATOR), builder.getLogger(),true, builder.shouldUseLogHack());
+            logLines(builder.getType(), tag, requestBody.split(LINE_SEPARATOR), builder.getLogger(),true, builder.isLogHackEnable());
         }
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, END_LINE, builder.shouldUseLogHack());
+            I.log(builder.getType(), tag, END_LINE, builder.isLogHackEnable());
     }
 
     static void printJsonResponse(LoggingInterceptor.Builder builder, long chainMs, boolean isSuccessful,
@@ -71,46 +71,46 @@ class Printer {
             builder.getLevel(), segments, message);
 
         if (builder.getLogger() == null) {
-            I.log(builder.getType(), tag, RESPONSE_UP_LINE, builder.shouldUseLogHack());
+            I.log(builder.getType(), tag, RESPONSE_UP_LINE, builder.isLogHackEnable());
         }
 
-        logLines(builder.getType(), tag, urlLine, builder.getLogger(), true, builder.shouldUseLogHack());
-        logLines(builder.getType(), tag, response, builder.getLogger(), true, builder.shouldUseLogHack());
+        logLines(builder.getType(), tag, urlLine, builder.getLogger(), true, builder.isLogHackEnable());
+        logLines(builder.getType(), tag, response, builder.getLogger(), true, builder.isLogHackEnable());
 
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
             logLines(builder.getType(), tag, responseBody.split(LINE_SEPARATOR), builder.getLogger(),
-                true, builder.shouldUseLogHack());
+                true, builder.isLogHackEnable());
         }
         if (builder.getLogger() == null) {
-            I.log(builder.getType(), tag, END_LINE, builder.shouldUseLogHack());
+            I.log(builder.getType(), tag, END_LINE, builder.isLogHackEnable());
         }
     }
 
     static void printFileRequest(LoggingInterceptor.Builder builder, Request request) {
         String tag = builder.getTag(true);
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, REQUEST_UP_LINE, builder.shouldUseLogHack());
+            I.log(builder.getType(), tag, REQUEST_UP_LINE, builder.isLogHackEnable());
         logLines(builder.getType(), tag, new String[]{URL_TAG + request.url()}, builder.getLogger(),
-            false, builder.shouldUseLogHack());
+            false, builder.isLogHackEnable());
         logLines(builder.getType(), tag, getRequest(request, builder.getLevel()), builder.getLogger(),
-            true, builder.shouldUseLogHack());
+            true, builder.isLogHackEnable());
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
-            logLines(builder.getType(), tag, OMITTED_REQUEST, builder.getLogger(), true, builder.shouldUseLogHack());
+            logLines(builder.getType(), tag, OMITTED_REQUEST, builder.getLogger(), true, builder.isLogHackEnable());
         }
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, END_LINE, builder.shouldUseLogHack());
+            I.log(builder.getType(), tag, END_LINE, builder.isLogHackEnable());
     }
 
     static void printFileResponse(LoggingInterceptor.Builder builder, long chainMs, boolean isSuccessful,
                                   int code, String headers, List<String> segments, String message) {
         String tag = builder.getTag(false);
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, RESPONSE_UP_LINE, builder.shouldUseLogHack());
+            I.log(builder.getType(), tag, RESPONSE_UP_LINE, builder.isLogHackEnable());
         logLines(builder.getType(), tag, getResponse(headers, chainMs, code, isSuccessful,
-                builder.getLevel(), segments, message), builder.getLogger(), true, builder.shouldUseLogHack());
-        logLines(builder.getType(), tag, OMITTED_RESPONSE, builder.getLogger(), true, builder.shouldUseLogHack());
+                builder.getLevel(), segments, message), builder.getLogger(), true, builder.isLogHackEnable());
+        logLines(builder.getType(), tag, OMITTED_RESPONSE, builder.getLogger(), true, builder.isLogHackEnable());
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, END_LINE, builder.shouldUseLogHack());
+            I.log(builder.getType(), tag, END_LINE, builder.isLogHackEnable());
     }
 
     private static String[] getRequest(Request request, Level level) {
@@ -177,8 +177,7 @@ class Printer {
                 if (logger == null) {
                     I.log(type, tag, DEFAULT_LINE + line.substring(start, end), useLogHack);
                 } else {
-                    final String finalTag = I.getFinalTag(tag, useLogHack);
-                    logger.log(type, finalTag, line.substring(start, end));
+                    logger.log(type, tag, line.substring(start, end));
                 }
             }
         }
