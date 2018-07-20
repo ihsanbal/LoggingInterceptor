@@ -29,6 +29,7 @@ branches:
   only:
     - master
     - development
+    - fix
 
 cache:
   directories:
