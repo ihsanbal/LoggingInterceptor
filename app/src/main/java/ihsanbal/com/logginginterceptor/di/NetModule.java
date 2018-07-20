@@ -39,8 +39,9 @@ public class NetModule {
                 .log(Platform.INFO)
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .addQueryParam("query", "0")
-//              .logger((level, tag, msg) -> Log.w(tag, msg))
-//              .executor(Executors.newSingleThreadExecutor())
+                .enableAndroidStudio_v3_LogsHack(true)
+//                .logger((level, tag, msg) -> Log.w(tag, msg))
+                .executor(Executors.newSingleThreadExecutor())
                 .build());
         return client.build();
     }
@@ -61,5 +62,4 @@ public class NetModule {
     Api provideApi(Retrofit retrofit) {
         return retrofit.create(Api.class);
     }
-
 }
