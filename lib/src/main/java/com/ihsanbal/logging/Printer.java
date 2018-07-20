@@ -52,19 +52,18 @@ class Printer {
         String requestBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + bodyToString(request);
         String tag = builder.getTag(true);
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, REQUEST_UP_LINE);
-        logLines(builder.getType(), tag, new String[]{URL_TAG + request.url()}, builder.getLogger(), false);
-        logLines(builder.getType(), tag, getRequest(request, builder.getLevel()), builder.getLogger(), true);
+            I.log(builder.getType(), tag, REQUEST_UP_LINE, builder.shouldUseLogHack());
+        logLines(builder.getType(), tag, new String[]{URL_TAG + request.url()}, builder.getLogger(), false, builder.shouldUseLogHack());
+        logLines(builder.getType(), tag, getRequest(request, builder.getLevel()), builder.getLogger(), true, builder.shouldUseLogHack());
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
-            logLines(builder.getType(), tag, requestBody.split(LINE_SEPARATOR), builder.getLogger(), true);
+            logLines(builder.getType(), tag, requestBody.split(LINE_SEPARATOR), builder.getLogger(),true, builder.shouldUseLogHack());
         }
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, END_LINE);
+            I.log(builder.getType(), tag, END_LINE, builder.shouldUseLogHack());
     }
 
     static void printJsonResponse(LoggingInterceptor.Builder builder, long chainMs, boolean isSuccessful,
         int code, String headers, String bodyString, List<String> segments, String message, final String responseUrl) {
-        
         final String responseBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + getJsonString(bodyString);
         final String tag = builder.getTag(false);
         final String[] urlLine = { URL_TAG + responseUrl, N };
@@ -72,43 +71,46 @@ class Printer {
             builder.getLevel(), segments, message);
 
         if (builder.getLogger() == null) {
-            I.log(builder.getType(), tag, RESPONSE_UP_LINE);
+            I.log(builder.getType(), tag, RESPONSE_UP_LINE, builder.shouldUseLogHack());
         }
 
-        logLines(builder.getType(), tag, urlLine, builder.getLogger(), true);
-        logLines(builder.getType(), tag, response, builder.getLogger(), true);
+        logLines(builder.getType(), tag, urlLine, builder.getLogger(), true, builder.shouldUseLogHack());
+        logLines(builder.getType(), tag, response, builder.getLogger(), true, builder.shouldUseLogHack());
 
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
-            logLines(builder.getType(), tag, responseBody.split(LINE_SEPARATOR), builder.getLogger(), true);
+            logLines(builder.getType(), tag, responseBody.split(LINE_SEPARATOR), builder.getLogger(),
+                true, builder.shouldUseLogHack());
         }
         if (builder.getLogger() == null) {
-            I.log(builder.getType(), tag, END_LINE);
+            I.log(builder.getType(), tag, END_LINE, builder.shouldUseLogHack());
         }
     }
 
     static void printFileRequest(LoggingInterceptor.Builder builder, Request request) {
         String tag = builder.getTag(true);
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, REQUEST_UP_LINE);
-        logLines(builder.getType(), tag, new String[]{URL_TAG + request.url()}, builder.getLogger(), false);
-        logLines(builder.getType(), tag, getRequest(request, builder.getLevel()), builder.getLogger(), true);
+            I.log(builder.getType(), tag, REQUEST_UP_LINE, builder.shouldUseLogHack());
+        logLines(builder.getType(), tag, new String[]{URL_TAG + request.url()}, builder.getLogger(),
+            false, builder.shouldUseLogHack());
+        logLines(builder.getType(), tag, getRequest(request, builder.getLevel()), builder.getLogger(),
+            true, builder.shouldUseLogHack());
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
-            logLines(builder.getType(), tag, OMITTED_REQUEST, builder.getLogger(), true);
+            logLines(builder.getType(), tag, OMITTED_REQUEST, builder.getLogger(), true, builder.shouldUseLogHack());
         }
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, END_LINE);
+            I.log(builder.getType(), tag, END_LINE, builder.shouldUseLogHack());
     }
 
     static void printFileResponse(LoggingInterceptor.Builder builder, long chainMs, boolean isSuccessful,
                                   int code, String headers, List<String> segments, String message) {
         String tag = builder.getTag(false);
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, RESPONSE_UP_LINE);
+            I.log(builder.getType(), tag, RESPONSE_UP_LINE, builder.shouldUseLogHack());
         logLines(builder.getType(), tag, getResponse(headers, chainMs, code, isSuccessful,
-                builder.getLevel(), segments, message), builder.getLogger(), true);
-        logLines(builder.getType(), tag, OMITTED_RESPONSE, builder.getLogger(), true);
+                builder.getLevel(), segments, message), builder.getLogger(), true, builder.shouldUseLogHack());
+        logLines(builder.getType(), tag, OMITTED_RESPONSE, builder.getLogger(), true, builder.shouldUseLogHack());
         if (builder.getLogger() == null)
-            I.log(builder.getType(), tag, END_LINE);
+            I.log(builder.getType(), tag, END_LINE, builder.shouldUseLogHack());
     }
 
     private static String[] getRequest(Request request, Level level) {
@@ -163,7 +165,8 @@ class Printer {
         return builder.toString();
     }
 
-    private static void logLines(int type, String tag, String[] lines, Logger logger, boolean withLineSize) {
+    private static void logLines(int type, String tag, String[] lines, Logger logger,
+        boolean withLineSize, boolean useLogHack) {
         for (String line : lines) {
             int lineLength = line.length();
             int MAX_LONG_SIZE = withLineSize ? 110 : lineLength;
@@ -172,9 +175,10 @@ class Printer {
                 int end = (i + 1) * MAX_LONG_SIZE;
                 end = end > line.length() ? line.length() : end;
                 if (logger == null) {
-                    I.log(type, tag, DEFAULT_LINE + line.substring(start, end));
+                    I.log(type, tag, DEFAULT_LINE + line.substring(start, end), useLogHack);
                 } else {
-                    logger.log(type, tag, line.substring(start, end));
+                    final String finalTag = I.getFinalTag(tag, useLogHack);
+                    logger.log(type, finalTag, line.substring(start, end));
                 }
             }
         }

@@ -175,6 +175,7 @@ public class LoggingInterceptor implements Interceptor {
         private static String TAG = "LoggingI";
         private final HashMap<String, String> headers;
         private final HashMap<String, String> queries;
+        private boolean useLogHack = false;
         private boolean isDebug;
         private int type = Platform.INFO;
         private String requestTag;
@@ -230,7 +231,11 @@ public class LoggingInterceptor implements Interceptor {
             return executor;
         }
 
-        /**
+        boolean shouldUseLogHack() {
+          return useLogHack;
+        }
+
+      /**
          * @param name  Filed
          * @param value Value
          * @return Builder
@@ -322,6 +327,20 @@ public class LoggingInterceptor implements Interceptor {
         public Builder executor(Executor executor) {
             this.executor = executor;
             return this;
+        }
+
+        /**
+         * Call this if you want to have formatted pretty output in Android Studio logCat.
+         * By default this 'hack' is not applied.
+         *
+         * @param useHack setup builder to use hack for Android Studio v3+ in order to have nice
+         * output as it was in previous A.S. versions.
+         * @return Builder
+         * @see Logger
+         * */
+        public Builder useAndroidStudio_v3_LogsHack(final boolean useHack) {
+          useLogHack = useHack;
+          return this;
         }
 
         public LoggingInterceptor build() {
