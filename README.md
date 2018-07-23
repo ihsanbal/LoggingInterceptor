@@ -26,6 +26,7 @@ OkHttpClient.Builder client = new OkHttpClient.Builder();
                 .response("Response")
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .addQueryParam("query", "0")
+//              .enableAndroidStudio_v3_LogsHack(true) /* enable fix for logCat logging issues with pretty format */
 //              .logger(new Logger() {
 //                  @Override
 //                  public void log(int level, String tag, String msg) {
