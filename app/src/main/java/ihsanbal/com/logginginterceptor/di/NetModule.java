@@ -47,12 +47,7 @@ public class NetModule {
                 .enableAndroidStudio_v3_LogsHack(true)
                 .enableMock(BuildConfig.MOCK, 1000L, request -> {
                     String segment = request.url().pathSegments().get(0);
-                    switch (segment) {
-                        case "get":
-                            return Okio.buffer(Okio.source(mAssetManager.open(String.format("mock/%s.json", segment)))).readUtf8();
-                        default:
-                            return Okio.buffer(Okio.source(mAssetManager.open(String.format("mock/%s.json", segment)))).readUtf8();
-                    }
+                    return Okio.buffer(Okio.source(mAssetManager.open(String.format("mock/%s.json", segment)))).readUtf8();
                 })
                 .executor(Executors.newSingleThreadExecutor())
                 .build());

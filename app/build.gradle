@@ -67,7 +67,7 @@ dependencies {
 //    implementation(project(':lib')) {
 //        exclude group: 'org.json', module: 'json'
 //    }
-    implementation('com.github.ihsanbal:LoggingInterceptor:3.0.0-SNAPSHOT') {
+    implementation('com.github.ihsanbal:LoggingInterceptor:3.0.0') {
         exclude group: 'org.json', module: 'json'
     }
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
