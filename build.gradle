@@ -13,7 +13,7 @@ buildscript {
 project.ext {
     groupId = 'com.github.ihsanbal'
     artifactId = 'LoggingInterceptor'
-    snapshot = '2.0.9-SNAPSHOT'
+    snapshot = '3.0.0-SNAPSHOT'
 }
 
 allprojects {
