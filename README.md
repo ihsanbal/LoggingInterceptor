@@ -26,6 +26,10 @@ OkHttpClient.Builder client = new OkHttpClient.Builder();
                 .response("Response")
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .addQueryParam("query", "0")
+		.enableMock(true, 1000L, request -> {
+                    String segment = request.url().pathSegments().get(0);
+                    return Okio.buffer(Okio.source(mAssetManager.open(String.format("mock/%s.json", segment)))).readUtf8();
+                })
 //              .enableAndroidStudio_v3_LogsHack(true) /* enable fix for logCat logging issues with pretty format */
 //              .logger(new Logger() {
 //                  @Override
@@ -59,7 +63,7 @@ allprojects {
 }
 
 dependencies {
-	compile('com.github.ihsanbal:LoggingInterceptor:2.0.7') {
+	compile('com.github.ihsanbal:LoggingInterceptor:3.0.0') {
         	exclude group: 'org.json', module: 'json'
     	}
 }
@@ -75,7 +79,7 @@ Maven:
 <dependency>
 	    <groupId>com.github.ihsanbal</groupId>
 	    <artifactId>LoggingInterceptor</artifactId>
-	    <version>2.0.7</version>
+	    <version>3.0.0</version>
 </dependency>
 ```
 
