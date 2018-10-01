@@ -1,0 +1,15 @@
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        library(MavenPublication) {
+            setGroupId(project.groupId)
+            setArtifactId(project.artifactId)
+            version project.snapshot
+
+            println "publishing: " + groupId
+            println "publishing: " + artifactId
+            println "publishing: " + version
+        }
+    }
+}

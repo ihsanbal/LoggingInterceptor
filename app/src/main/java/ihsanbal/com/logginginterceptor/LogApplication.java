@@ -2,8 +2,6 @@ package ihsanbal.com.logginginterceptor;
 
 import android.app.Application;
 
-import com.squareup.leakcanary.LeakCanary;
-
 import ihsanbal.com.logginginterceptor.di.DaggerNetComponent;
 import ihsanbal.com.logginginterceptor.di.NetComponent;
 import ihsanbal.com.logginginterceptor.di.NetModule;
@@ -20,12 +18,8 @@ public class LogApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mAppComponent = DaggerNetComponent.builder()
-                .netModule(new NetModule("http://demo2961085.mockable.io/"))
+                .netModule(new NetModule("http://demo2961085.mockable.io/", getAssets()))
                 .build();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
-        }
-        LeakCanary.install(this);
     }
 
     public NetComponent getAppComponent() {

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okio.Buffer;
 
 /**
@@ -39,6 +40,7 @@ class Printer {
     private static final String CORNER_BOTTOM = "└ ";
     private static final String CENTER_LINE = "├ ";
     private static final String DEFAULT_LINE = "│ ";
+    private static final String OOM_OMITTED = LINE_SEPARATOR + "Output omitted because of Object size.";
 
     protected Printer() {
         throw new UnsupportedOperationException();
@@ -56,19 +58,19 @@ class Printer {
         logLines(builder.getType(), tag, new String[]{URL_TAG + request.url()}, builder.getLogger(), false, builder.isLogHackEnable());
         logLines(builder.getType(), tag, getRequest(request, builder.getLevel()), builder.getLogger(), true, builder.isLogHackEnable());
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
-            logLines(builder.getType(), tag, requestBody.split(LINE_SEPARATOR), builder.getLogger(),true, builder.isLogHackEnable());
+            logLines(builder.getType(), tag, requestBody.split(LINE_SEPARATOR), builder.getLogger(), true, builder.isLogHackEnable());
         }
         if (builder.getLogger() == null)
             I.log(builder.getType(), tag, END_LINE, builder.isLogHackEnable());
     }
 
     static void printJsonResponse(LoggingInterceptor.Builder builder, long chainMs, boolean isSuccessful,
-        int code, String headers, String bodyString, List<String> segments, String message, final String responseUrl) {
+                                  int code, String headers, String bodyString, List<String> segments, String message, final String responseUrl) {
         final String responseBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + getJsonString(bodyString);
         final String tag = builder.getTag(false);
-        final String[] urlLine = { URL_TAG + responseUrl, N };
+        final String[] urlLine = {URL_TAG + responseUrl, N};
         final String[] response = getResponse(headers, chainMs, code, isSuccessful,
-            builder.getLevel(), segments, message);
+                builder.getLevel(), segments, message);
 
         if (builder.getLogger() == null) {
             I.log(builder.getType(), tag, RESPONSE_UP_LINE, builder.isLogHackEnable());
@@ -79,7 +81,7 @@ class Printer {
 
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
             logLines(builder.getType(), tag, responseBody.split(LINE_SEPARATOR), builder.getLogger(),
-                true, builder.isLogHackEnable());
+                    true, builder.isLogHackEnable());
         }
         if (builder.getLogger() == null) {
             I.log(builder.getType(), tag, END_LINE, builder.isLogHackEnable());
@@ -91,9 +93,9 @@ class Printer {
         if (builder.getLogger() == null)
             I.log(builder.getType(), tag, REQUEST_UP_LINE, builder.isLogHackEnable());
         logLines(builder.getType(), tag, new String[]{URL_TAG + request.url()}, builder.getLogger(),
-            false, builder.isLogHackEnable());
+                false, builder.isLogHackEnable());
         logLines(builder.getType(), tag, getRequest(request, builder.getLevel()), builder.getLogger(),
-            true, builder.isLogHackEnable());
+                true, builder.isLogHackEnable());
         if (builder.getLevel() == Level.BASIC || builder.getLevel() == Level.BODY) {
             logLines(builder.getType(), tag, OMITTED_REQUEST, builder.getLogger(), true, builder.isLogHackEnable());
         }
@@ -166,7 +168,7 @@ class Printer {
     }
 
     private static void logLines(int type, String tag, String[] lines, Logger logger,
-        boolean withLineSize, boolean useLogHack) {
+                                 boolean withLineSize, boolean useLogHack) {
         for (String line : lines) {
             int lineLength = line.length();
             int MAX_LONG_SIZE = withLineSize ? 110 : lineLength;
@@ -187,9 +189,10 @@ class Printer {
         try {
             final Request copy = request.newBuilder().build();
             final Buffer buffer = new Buffer();
-            if (copy.body() == null)
+            RequestBody body = copy.body();
+            if (body == null)
                 return "";
-            copy.body().writeTo(buffer);
+            body.writeTo(buffer);
             return getJsonString(buffer.readUtf8());
         } catch (final IOException e) {
             return "{\"err\": \"" + e.getMessage() + "\"}";
@@ -210,6 +213,8 @@ class Printer {
             }
         } catch (JSONException e) {
             message = msg;
+        } catch (OutOfMemoryError e1) {
+            message = OOM_OMITTED;
         }
         return message;
     }

@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -80,7 +81,23 @@ public class LoggingInterceptor implements Interceptor {
         }
 
         final long st = System.nanoTime();
-        final Response response = chain.proceed(request);
+        final Response response;
+        if (builder.isMockEnabled) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(builder.sleepMs);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            response = new Response.Builder()
+                    .body(ResponseBody.create(MediaType.parse("application/json"), builder.listener.getJsonResponse(request)))
+                    .request(chain.request())
+                    .protocol(Protocol.HTTP_2)
+                    .message("Mock")
+                    .code(200)
+                    .build();
+        } else {
+            response = chain.proceed(request);
+        }
         final long chainMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - st);
 
         final List<String> segmentList = request.url().encodedPathSegments();
@@ -183,6 +200,9 @@ public class LoggingInterceptor implements Interceptor {
         private Level level = Level.BASIC;
         private Logger logger;
         private Executor executor;
+        private boolean isMockEnabled;
+        private long sleepMs;
+        private BufferListener listener;
 
         public Builder() {
             headers = new HashMap<>();
@@ -232,10 +252,10 @@ public class LoggingInterceptor implements Interceptor {
         }
 
         boolean isLogHackEnable() {
-          return isLogHackEnable;
+            return isLogHackEnable;
         }
 
-      /**
+        /**
          * @param name  Filed
          * @param value Value
          * @return Builder
@@ -330,17 +350,30 @@ public class LoggingInterceptor implements Interceptor {
         }
 
         /**
+         * @param useMock let you use json file from asset
+         * @param sleep   let you see progress dialog when you request
+         * @return Builder
+         * @see LoggingInterceptor
+         */
+        public Builder enableMock(boolean useMock, long sleep, BufferListener listener) {
+            this.isMockEnabled = useMock;
+            this.sleepMs = sleep;
+            this.listener = listener;
+            return this;
+        }
+
+        /**
          * Call this if you want to have formatted pretty output in Android Studio logCat.
          * By default this 'hack' is not applied.
          *
          * @param useHack setup builder to use hack for Android Studio v3+ in order to have nice
-         * output as it was in previous A.S. versions.
+         *                output as it was in previous A.S. versions.
          * @return Builder
          * @see Logger
-         * */
+         */
         public Builder enableAndroidStudio_v3_LogsHack(final boolean useHack) {
-          isLogHackEnable = useHack;
-          return this;
+            isLogHackEnable = useHack;
+            return this;
         }
 
         public LoggingInterceptor build() {

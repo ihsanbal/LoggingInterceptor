@@ -12,7 +12,17 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        buildConfigField("boolean", "MOCK", "false")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        debug {
+            storeFile rootProject.file("${System.properties['user.home']}/.android/debug.keystore")
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storePassword 'android'
+        }
     }
 
     compileOptions {
@@ -27,6 +37,14 @@ android {
         disable 'GoogleAppIndexingWarning'
     }
 
+    buildTypes {
+        mock {
+            debuggable true
+            signingConfig signingConfigs.debug
+            buildConfigField("boolean", "MOCK", "true")
+        }
+    }
+
 }
 
 dependencies {
@@ -39,15 +57,19 @@ dependencies {
     implementation 'com.jakewharton:butterknife:' + rootProject.ext.butterKnifeVersion
     implementation 'com.squareup.retrofit2:converter-gson:' + rootProject.ext.gsonConverterVersion
     implementation 'com.squareup.okhttp3:okhttp:' + rootProject.ext.okhttpVersion
+    implementation 'com.squareup.okio:okio:1.15.0'
     annotationProcessor 'com.google.dagger:dagger-compiler:' + rootProject.ext.daggerVersion
     annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterKnifeVersion
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:' + rootProject.ext.leakCanaryVersion
     releaseApi 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
     compileOnly 'javax.annotation:jsr250-api:1.0'
-    implementation (project(':lib')) {
+    implementation(project(':lib')) {
         exclude group: 'org.json', module: 'json'
     }
+//    implementation('com.github.ihsanbal:LoggingInterceptor:2.0.9-SNAPSHOT') {
+//        exclude group: 'org.json', module: 'json'
+//    }
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'

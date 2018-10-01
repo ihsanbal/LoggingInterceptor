@@ -1,5 +1,7 @@
 package ihsanbal.com.logginginterceptor.di;
 
+import android.content.res.AssetManager;
+
 import com.ihsanbal.logging.Level;
 import com.ihsanbal.logging.LoggingInterceptor;
 
@@ -13,6 +15,7 @@ import ihsanbal.com.logginginterceptor.BuildConfig;
 import ihsanbal.com.logginginterceptor.api.Api;
 import okhttp3.OkHttpClient;
 import okhttp3.internal.platform.Platform;
+import okio.Okio;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -23,10 +26,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class NetModule {
 
+    private final AssetManager mAssetManager;
     private String mEndPoint;
 
-    public NetModule(String endpoint) {
+    public NetModule(String endpoint, AssetManager assetManager) {
         mEndPoint = endpoint;
+        mAssetManager = assetManager;
     }
 
     @Provides
@@ -40,7 +45,15 @@ public class NetModule {
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .addQueryParam("query", "0")
                 .enableAndroidStudio_v3_LogsHack(true)
-//                .logger((level, tag, msg) -> Log.w(tag, msg))
+                .enableMock(BuildConfig.MOCK, 1000L, request -> {
+                    String segment = request.url().pathSegments().get(0);
+                    switch (segment) {
+                        case "get":
+                            return Okio.buffer(Okio.source(mAssetManager.open(String.format("mock/%s.json", segment)))).readUtf8();
+                        default:
+                            return Okio.buffer(Okio.source(mAssetManager.open(String.format("mock/%s.json", segment)))).readUtf8();
+                    }
+                })
                 .executor(Executors.newSingleThreadExecutor())
                 .build());
         return client.build();
