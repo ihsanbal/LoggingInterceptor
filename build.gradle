@@ -11,9 +11,9 @@ buildscript {
 }
 
 project.ext {
-    groupId = 'com.github.ihsanbal'
-    artifactId = 'LoggingInterceptor'
-    snapshot = '3.0.0-SNAPSHOT'
+//    groupId = 'com.github.ihsanbal'
+//    artifactId = 'LoggingInterceptor'
+//    snapshot = '3.0.0-SNAPSHOT'
 }
 
 allprojects {

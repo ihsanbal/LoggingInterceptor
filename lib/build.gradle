@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'project-report'
 
-group = 'com.github.ihsanbal'
+//group = 'com.github.ihsanbal'
 
 //noinspection GroovyUnusedAssignment
 sourceCompatibility = JavaVersion.VERSION_1_7
@@ -18,4 +18,4 @@ dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.10.0'
 }
 
-apply from: '../pTML.gradle'
+//apply from: '../pTML.gradle'

@@ -30,6 +30,7 @@ public class LoggingInterceptor implements Interceptor {
         this.isDebug = builder.isDebug;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
