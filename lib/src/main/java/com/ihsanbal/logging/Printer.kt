@@ -11,7 +11,7 @@ import java.io.IOException
 /**
  * @author ihsan on 09/02/2017.
  */
-internal class Printer protected constructor() {
+internal open class Printer protected constructor() {
     companion object {
         private const val JSON_INDENT = 3
         private val LINE_SEPARATOR = System.getProperty("line.separator")
@@ -35,7 +35,7 @@ internal class Printer protected constructor() {
         private const val DEFAULT_LINE = "│ "
         private val OOM_OMITTED = LINE_SEPARATOR + "Output omitted because of Object size."
         private fun isEmpty(line: String): Boolean {
-            return TextUtils.isEmpty(line) || N == line || T == line || TextUtils.isEmpty(line.trim { it <= ' ' })
+            return line.isEmpty() || N == line || T == line || line.trim { it <= ' ' }.isEmpty()
         }
 
         @JvmStatic
@@ -112,10 +112,14 @@ internal class Printer protected constructor() {
             val log: String
             val loggableHeader = level === Level.HEADERS || level === Level.BASIC
             val segmentString = slashSegments(segments)
-            log = ((if (!TextUtils.isEmpty(segmentString)) "$segmentString - " else "") + "is success : "
+            log = ((if (segmentString.isNotEmpty()) "$segmentString - " else "") + "is success : "
                     + isSuccessful + " - " + RECEIVED_TAG + tookMs + "ms" + DOUBLE_SEPARATOR + STATUS_CODE_TAG +
-                    code + " / " + message + DOUBLE_SEPARATOR + if (isEmpty(header)) "" else if (loggableHeader) HEADERS_TAG + LINE_SEPARATOR +
-                    dotHeaders(header) else "")
+                    code + " / " + message + DOUBLE_SEPARATOR + when {
+                isEmpty(header) -> ""
+                loggableHeader -> HEADERS_TAG + LINE_SEPARATOR +
+                        dotHeaders(header)
+                else -> ""
+            })
             return log.split(LINE_SEPARATOR).toTypedArray()
         }
 
@@ -133,12 +137,16 @@ internal class Printer protected constructor() {
             var tag = "─ "
             if (headers.size > 1) {
                 for (i in headers.indices) {
-                    tag = if (i == 0) {
-                        CORNER_UP
-                    } else if (i == headers.size - 1) {
-                        CORNER_BOTTOM
-                    } else {
-                        CENTER_LINE
+                    tag = when (i) {
+                        0 -> {
+                            CORNER_UP
+                        }
+                        headers.size - 1 -> {
+                            CORNER_BOTTOM
+                        }
+                        else -> {
+                            CENTER_LINE
+                        }
                     }
                     builder.append(tag).append(headers[i]).append("\n")
                 }
@@ -154,10 +162,10 @@ internal class Printer protected constructor() {
                              withLineSize: Boolean, useLogHack: Boolean) {
             for (line in lines) {
                 val lineLength = line.length
-                val MAX_LONG_SIZE = if (withLineSize) 110 else lineLength
-                for (i in 0..lineLength / MAX_LONG_SIZE) {
-                    val start = i * MAX_LONG_SIZE
-                    var end = (i + 1) * MAX_LONG_SIZE
+                val maxLength = if (withLineSize) 110 else lineLength
+                for (i in 0..lineLength / maxLength) {
+                    val start = i * maxLength
+                    var end = (i + 1) * maxLength
                     end = if (end > line.length) line.length else end
                     if (logger == null) {
                         log(type, tag, DEFAULT_LINE + line.substring(start, end), useLogHack)
@@ -184,14 +192,18 @@ internal class Printer protected constructor() {
         fun getJsonString(msg: String): String {
             val message: String
             message = try {
-                if (msg.startsWith("{")) {
-                    val jsonObject = JSONObject(msg)
-                    jsonObject.toString(JSON_INDENT)
-                } else if (msg.startsWith("[")) {
-                    val jsonArray = JSONArray(msg)
-                    jsonArray.toString(JSON_INDENT)
-                } else {
-                    msg
+                when {
+                    msg.startsWith("{") -> {
+                        val jsonObject = JSONObject(msg)
+                        jsonObject.toString(JSON_INDENT)
+                    }
+                    msg.startsWith("[") -> {
+                        val jsonArray = JSONArray(msg)
+                        jsonArray.toString(JSON_INDENT)
+                    }
+                    else -> {
+                        msg
+                    }
                 }
             } catch (e: JSONException) {
                 msg

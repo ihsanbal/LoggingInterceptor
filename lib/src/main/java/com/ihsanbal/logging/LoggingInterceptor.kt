@@ -5,9 +5,9 @@ import com.ihsanbal.logging.Printer.Companion.printFileRequest
 import com.ihsanbal.logging.Printer.Companion.printFileResponse
 import com.ihsanbal.logging.Printer.Companion.printJsonRequest
 import com.ihsanbal.logging.Printer.Companion.printJsonResponse
-import com.ihsanbal.logging.TextUtils.isEmpty
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.internal.platform.Platform
 import java.io.IOException
 import java.util.*
@@ -18,37 +18,61 @@ import java.util.concurrent.TimeUnit
  * @author ihsan on 09/02/2017.
  */
 class LoggingInterceptor private constructor(private val builder: Builder) : Interceptor {
-    private val isDebug: Boolean
+
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
         val headerMap = builder.headers
-        if (headerMap.size > 0) {
-            val requestBuilder = request.newBuilder()
-            for (key in headerMap.keys) {
-                val value = headerMap[key]
-                requestBuilder.addHeader(key, value!!)
+        request = buildRequest(headerMap, request)
+        return when (!builder.isDebug || builder.level === Level.NONE) {
+            true -> chain.proceed(request)
+            else -> {
+                val executor = builder.executor
+                printRequest(request.body?.contentType()?.subtype, executor, request)
+                val st = System.nanoTime()
+                val response: Response = when (builder.isMockEnabled && builder.listener != null) {
+                    true -> returnMockResponse(request, chain)
+                    else -> chain.proceed(request)
+                }
+                val chainMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - st)
+                val segmentList = request.url.encodedPathSegments
+                val header = response.headers.toString()
+                val code = response.code
+                val isSuccessful = response.isSuccessful
+                val message = response.message
+                val responseBody = response.body
+                val contentType = responseBody!!.contentType()
+                var subtype: String? = null
+                val body: ResponseBody
+                if (contentType != null) {
+                    subtype = contentType.subtype
+                }
+                body = if (isNotFileRequest(subtype)) {
+                    val bodyString = getJsonString(responseBody.string())
+                    val url = response.request.url.toString()
+                    printLog(executor, chainMs, isSuccessful, code, header, bodyString, segmentList, message, url)
+                    bodyString.toResponseBody(contentType)
+                } else {
+                    printLog(executor, chainMs, isSuccessful, code, header, segmentList, message)
+                    return response
+                }
+                return response.newBuilder().body(body).build()
             }
-            request = requestBuilder.build()
         }
-        val queryMap = builder.httpUrl
-        if (queryMap.size > 0) {
-            val httpUrlBuilder = request.url.newBuilder(request.url.toString())
-            for (key in queryMap.keys) {
-                val value = queryMap[key]
-                httpUrlBuilder!!.addQueryParameter(key, value)
-            }
-            request = request.newBuilder().url(httpUrlBuilder!!.build()).build()
-        }
-        if (!isDebug || builder.level === Level.NONE) {
-            return chain.proceed(request)
-        }
-        val requestBody = request.body
-        var rSubtype: String? = null
-        if (requestBody != null && requestBody.contentType() != null) {
-            rSubtype = requestBody.contentType()!!.subtype
-        }
-        val executor = builder.executor
+    }
+
+    private fun returnMockResponse(request: Request, chain: Interceptor.Chain): Response {
+        delay()
+        return Response.Builder()
+                .body(builder.listener!!.getJsonResponse(request)!!.toResponseBody("application/json".toMediaTypeOrNull()))
+                .request(chain.request())
+                .protocol(Protocol.HTTP_2)
+                .message("Mock")
+                .code(200)
+                .build()
+    }
+
+    private fun printRequest(rSubtype: String?, executor: Executor?, request: Request) {
         if (isNotFileRequest(rSubtype)) {
             if (executor != null) {
                 executor.execute(createPrintJsonRequestRunnable(builder, request))
@@ -62,57 +86,66 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
                 printFileRequest(builder, request)
             }
         }
-        val st = System.nanoTime()
-        val response: Response
-        response = if (builder.isMockEnabled) {
-            try {
-                TimeUnit.MILLISECONDS.sleep(builder.sleepMs)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
+    }
+
+    private fun buildRequest(headerMap: HashMap<String, String>, request: Request): Request {
+        var managedRequest = request
+        managedRequest = addHeadersToRequest(headerMap, managedRequest)
+        val queryMap = builder.httpUrl
+        managedRequest = addQueryParamsToRequest(queryMap, managedRequest)
+        return managedRequest
+    }
+
+    private fun addQueryParamsToRequest(queryMap: HashMap<String, String>, request: Request): Request {
+        var managedRequest = request
+        if (queryMap.isNotEmpty()) {
+            val httpUrlBuilder = managedRequest.url.newBuilder(managedRequest.url.toString())
+            for (key in queryMap.keys) {
+                val value = queryMap[key]
+                httpUrlBuilder!!.addQueryParameter(key, value)
             }
-            Response.Builder()
-                    .body(ResponseBody.create("application/json".toMediaTypeOrNull(), builder.listener!!.getJsonResponse(request)!!))
-                    .request(chain.request())
-                    .protocol(Protocol.HTTP_2)
-                    .message("Mock")
-                    .code(200)
-                    .build()
+            managedRequest = managedRequest.newBuilder().url(httpUrlBuilder!!.build()).build()
+        }
+        return managedRequest
+    }
+
+    private fun addHeadersToRequest(headerMap: HashMap<String, String>, request: Request): Request {
+        var managedRequest = request
+        if (headerMap.isNotEmpty()) {
+            val requestBuilder = managedRequest.newBuilder()
+            for (key in headerMap.keys) {
+                val value = headerMap[key]
+                requestBuilder.addHeader(key, value!!)
+            }
+            managedRequest = requestBuilder.build()
+        }
+        return managedRequest
+    }
+
+    private fun printLog(executor: Executor?, chainMs: Long, isSuccessful: Boolean, code: Int, header: String, segmentList: List<String>, message: String) {
+        if (executor != null) {
+            executor.execute(createFileResponseRunnable(builder, chainMs, isSuccessful, code, header, segmentList, message))
         } else {
-            chain.proceed(request)
+            printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList, message)
         }
-        val chainMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - st)
-        val segmentList = request.url.encodedPathSegments
-        val header = response.headers.toString()
-        val code = response.code
-        val isSuccessful = response.isSuccessful
-        val message = response.message
-        val responseBody = response.body
-        val contentType = responseBody!!.contentType()
-        var subtype: String? = null
-        val body: ResponseBody
-        if (contentType != null) {
-            subtype = contentType.subtype
-        }
-        body = if (isNotFileRequest(subtype)) {
-            val bodyString = getJsonString(responseBody.string())
-            val url = response.request.url.toString()
-            if (executor != null) {
-                executor.execute(createPrintJsonResponseRunnable(builder, chainMs, isSuccessful, code, header, bodyString,
-                        segmentList, message, url))
-            } else {
-                printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString,
-                        segmentList, message, url)
-            }
-            ResponseBody.create(contentType, bodyString)
+    }
+
+    private fun printLog(executor: Executor?, chainMs: Long, isSuccessful: Boolean, code: Int, header: String, bodyString: String, segmentList: List<String>, message: String, url: String) {
+        if (executor != null) {
+            executor.execute(createPrintJsonResponseRunnable(builder, chainMs, isSuccessful, code, header, bodyString,
+                    segmentList, message, url))
         } else {
-            if (executor != null) {
-                executor.execute(createFileResponseRunnable(builder, chainMs, isSuccessful, code, header, segmentList, message))
-            } else {
-                printFileResponse(builder, chainMs, isSuccessful, code, header, segmentList, message)
-            }
-            return response
+            printJsonResponse(builder, chainMs, isSuccessful, code, header, bodyString,
+                    segmentList, message, url)
         }
-        return response.newBuilder().body(body).build()
+    }
+
+    private fun delay() {
+        try {
+            TimeUnit.MILLISECONDS.sleep(builder.sleepMs)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
     }
 
     private fun isNotFileRequest(subtype: String?): Boolean {
@@ -122,16 +155,17 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
                 || subtype.contains("html"))
     }
 
+    @Suppress("unused")
     class Builder {
-        val headers: HashMap<String, String>
-        val httpUrl: HashMap<String, String>
+        var headers: HashMap<String, String> = HashMap()
+        var httpUrl: HashMap<String, String> = HashMap()
         var isLogHackEnable = false
             private set
         var isDebug = false
         var type: Int = Platform.INFO
             private set
-        private var requestTag: String? = null
-        private var responseTag: String? = null
+        private var requestTag: String = TAG
+        private var responseTag: String = TAG
         var level = Level.BASIC
             private set
         var logger: Logger? = null
@@ -142,6 +176,11 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         var sleepMs: Long = 0
         var listener: BufferListener? = null
 
+        fun getTag(isRequest: Boolean): String = when (isRequest) {
+            true -> requestTag
+            else -> responseTag
+        }
+
         /**
          * @param level set log level
          * @return Builder
@@ -150,14 +189,6 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         fun setLevel(level: Level): Builder {
             this.level = level
             return this
-        }
-
-        fun getTag(isRequest: Boolean): String {
-            return if (isRequest) {
-                if (isEmpty(requestTag)) TAG else requestTag!!
-            } else {
-                if (isEmpty(responseTag)) TAG else responseTag!!
-            }
         }
 
         /**
@@ -199,7 +230,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
          * @param tag request log tag
          * @return Builder
          */
-        fun request(tag: String?): Builder {
+        fun request(tag: String): Builder {
             requestTag = tag
             return this
         }
@@ -210,7 +241,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
          * @param tag response log tag
          * @return Builder
          */
-        fun response(tag: String?): Builder {
+        fun response(tag: String): Builder {
             responseTag = tag
             return this
         }
@@ -276,7 +307,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
          * @return Builder
          * @see Logger
          */
-        fun enableAndroidStudio_v3_LogsHack(useHack: Boolean): Builder {
+        fun enableAndroidStudioLogHack(useHack: Boolean): Builder {
             isLogHackEnable = useHack
             return this
         }
@@ -289,33 +320,23 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
             private var TAG = "LoggingI"
         }
 
-        init {
-            headers = HashMap()
-            httpUrl = HashMap()
-        }
     }
 
-    companion object {
-        private fun createPrintJsonRequestRunnable(builder: Builder, request: Request): Runnable {
-            return Runnable { printJsonRequest(builder, request) }
-        }
-
-        private fun createFileRequestRunnable(builder: Builder, request: Request): Runnable {
-            return Runnable { printFileRequest(builder, request) }
-        }
-
-        private fun createPrintJsonResponseRunnable(builder: Builder, chainMs: Long, isSuccessful: Boolean,
-                                                    code: Int, headers: String, bodyString: String, segments: List<String>, message: String, responseUrl: String): Runnable {
-            return Runnable { printJsonResponse(builder, chainMs, isSuccessful, code, headers, bodyString, segments, message, responseUrl) }
-        }
-
-        private fun createFileResponseRunnable(builder: Builder, chainMs: Long, isSuccessful: Boolean,
-                                               code: Int, headers: String, segments: List<String>, message: String): Runnable {
-            return Runnable { printFileResponse(builder, chainMs, isSuccessful, code, headers, segments, message) }
-        }
+    private fun createPrintJsonRequestRunnable(builder: Builder, request: Request): Runnable {
+        return Runnable { printJsonRequest(builder, request) }
     }
 
-    init {
-        isDebug = builder.isDebug
+    private fun createFileRequestRunnable(builder: Builder, request: Request): Runnable {
+        return Runnable { printFileRequest(builder, request) }
+    }
+
+    private fun createPrintJsonResponseRunnable(builder: Builder, chainMs: Long, isSuccessful: Boolean,
+                                                code: Int, headers: String, bodyString: String, segments: List<String>, message: String, responseUrl: String): Runnable {
+        return Runnable { printJsonResponse(builder, chainMs, isSuccessful, code, headers, bodyString, segments, message, responseUrl) }
+    }
+
+    private fun createFileResponseRunnable(builder: Builder, chainMs: Long, isSuccessful: Boolean,
+                                           code: Int, headers: String, segments: List<String>, message: String): Runnable {
+        return Runnable { printFileResponse(builder, chainMs, isSuccessful, code, headers, segments, message) }
     }
 }

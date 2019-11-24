@@ -19,7 +19,8 @@ import ihsanbal.com.logginginterceptor.model.Body
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import rx.Observable
 import rx.Observer
@@ -51,52 +52,52 @@ class MainActivity : BaseCompatActivity() {
         button_pdf_upload.setOnClickListener { callUpload() }
     }
 
-    fun callPost() {
+    private fun callPost() {
         api.post(Body())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeOn(Schedulers.io())
                 ?.subscribe(subscriber)
     }
 
-    fun callZip() {
+    private fun callZip() {
         val observablePost = api.post(Body())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeOn(Schedulers.io())
         val observableGet = api.get()
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeOn(Schedulers.io())
-        Observable.zip(observablePost, observableGet) { o: ResponseBody?, o1: ResponseBody? -> o }.subscribe(subscriber)
+        Observable.zip(observablePost, observableGet) { o: ResponseBody?, _: ResponseBody? -> o }.subscribe(subscriber)
     }
 
-    fun callGet() {
+    private fun callGet() {
         api.get()
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeOn(Schedulers.io())
                 ?.subscribe(subscriber)
     }
 
-    fun callDelete() {
+    private fun callDelete() {
         api.delete()
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeOn(Schedulers.io())
                 ?.subscribe(subscriber)
     }
 
-    fun callPatch() {
+    private fun callPatch() {
         api.patch("q2")
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeOn(Schedulers.io())
                 ?.subscribe(subscriber)
     }
 
-    fun callPut() {
+    private fun callPut() {
         api.put()
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeOn(Schedulers.io())
                 ?.subscribe(subscriber)
     }
 
-    fun callPdf() {
+    private fun callPdf() {
         if (checkPermission()) {
             api.pdf()
                     ?.observeOn(AndroidSchedulers.mainThread())
@@ -113,19 +114,15 @@ class MainActivity : BaseCompatActivity() {
         }
     }
 
-    fun callUpload() {
+    private fun callUpload() {
         if (outputFile == null) {
             Toast.makeText(this, "Click 'File' for create file", Toast.LENGTH_SHORT).show()
             return
         }
-        val requestFile = RequestBody.create(
-                "application/pdf".toMediaTypeOrNull(),
-                outputFile!!
-        )
+        val requestFile = outputFile!!.asRequestBody("application/pdf".toMediaTypeOrNull())
         val body: MultipartBody.Part = MultipartBody.Part.createFormData("picture", outputFile!!.name, requestFile)
         val descriptionString = "hello, this is description speaking"
-        val description = RequestBody.create(
-                MultipartBody.FORM, descriptionString)
+        val description = descriptionString.toRequestBody(MultipartBody.FORM)
         api.post(description, body)
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeOn(Schedulers.io())
@@ -151,7 +148,7 @@ class MainActivity : BaseCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            Companion.PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 callPdf()
             } else {
                 Toast.makeText(applicationContext, "Permission Dained", Toast.LENGTH_SHORT).show()
@@ -166,7 +163,7 @@ class MainActivity : BaseCompatActivity() {
     }
 
     private fun requestPermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), Companion.PERMISSION_REQUEST_CODE)
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
     }
 
     @Throws(IOException::class)
