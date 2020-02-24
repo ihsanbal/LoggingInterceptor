@@ -1,19 +1,20 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     //noinspection GradleDependency
-    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "ihsanbal.com.logginginterceptor"
         minSdkVersion 14
-        //noinspection OldTargetApi
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         buildConfigField("boolean", "MOCK", "false")
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -44,33 +45,37 @@ android {
             buildConfigField("boolean", "MOCK", "true")
         }
     }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:' + rootProject.ext.supportVersion
-    implementation 'io.reactivex:rxjava:' + rootProject.ext.rxjavaVersion
-    implementation 'io.reactivex:rxandroid:' + rootProject.ext.rxAndroidVersion
-    implementation 'com.squareup.retrofit2:retrofit:' + rootProject.ext.retrofitVersion
-    implementation 'com.squareup.retrofit2:adapter-rxjava:' + rootProject.ext.retrofitRxAdapterVersion
-    implementation 'com.google.dagger:dagger:' + rootProject.ext.daggerVersion
-    implementation 'com.jakewharton:butterknife:' + rootProject.ext.butterKnifeVersion
-    implementation 'com.squareup.retrofit2:converter-gson:' + rootProject.ext.gsonConverterVersion
-    implementation 'com.squareup.okhttp3:okhttp:' + rootProject.ext.okhttpVersion
-    implementation 'com.squareup.okio:okio:1.15.0'
-    annotationProcessor 'com.google.dagger:dagger-compiler:' + rootProject.ext.daggerVersion
-    annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterKnifeVersion
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:' + rootProject.ext.leakCanaryVersion
-    releaseApi 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
-    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:' + rootProject.ext.leakCanaryVersion
+    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'io.reactivex:rxjava:' + rxjavaVersion
+    implementation 'io.reactivex:rxandroid:' + rxAndroidVersion
+    implementation 'com.squareup.retrofit2:retrofit:' + retrofitVersion
+    implementation 'com.squareup.retrofit2:adapter-rxjava:' + retrofitRxAdapterVersion
+    implementation 'com.google.dagger:dagger:' + daggerVersion
+    implementation 'com.squareup.retrofit2:converter-gson:' + gsonConverterVersion
+    implementation 'com.squareup.okhttp3:okhttp:' + okhttpVersion
+    implementation 'com.squareup.okio:okio:' + okioVersion
+    kapt 'com.google.dagger:dagger-compiler:' + daggerVersion
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:' + leakCanaryVersion
+    releaseApi 'com.squareup.leakcanary:leakcanary-android-no-op:' + leakCanaryVersion
+    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:' + leakCanaryVersion
     compileOnly 'javax.annotation:jsr250-api:1.0'
-//    implementation(project(':lib')) {
-//        exclude group: 'org.json', module: 'json'
-//    }
-    implementation('com.github.ihsanbal:LoggingInterceptor:3.0.0') {
+    implementation(project(':lib')) {
         exclude group: 'org.json', module: 'json'
     }
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+//    implementation('com.github.ihsanbal:LoggingInterceptor:3.0.0') {
+//        exclude group: 'org.json', module: 'json'
+//    }
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
 }
