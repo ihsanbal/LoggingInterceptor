@@ -1,5 +1,3 @@
-image: andreadelfante/android-ci-gem:latest
-
 language: android
 dist: trusty
 
@@ -22,7 +20,7 @@ notifications:
   email: false
 
 before_install:
-  - chmod +x ./gradlew
+  - yes | sdkmanager "platforms;android-28"
 
 script:
   - ./gradlew assembleDebug
