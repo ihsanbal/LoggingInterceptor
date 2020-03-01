@@ -1,8 +1,11 @@
 package ihsanbal.com.logginginterceptor.di
 
 import android.content.res.AssetManager
+import android.util.Log
 import android.util.Log.INFO
+import com.ihsanbal.logging.BufferListener
 import com.ihsanbal.logging.Level
+import com.ihsanbal.logging.Logger
 import com.ihsanbal.logging.LoggingInterceptor
 import dagger.Module
 import dagger.Provides
@@ -33,11 +36,18 @@ class NetModule(private val mEndPoint: String, private val mAssetManager: AssetM
                 .log(INFO)
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .addQueryParam("query", "0")
-                .enableAndroidStudio_v3_LogsHack(true)
-                .enableMock(BuildConfig.MOCK, 1000L) { request: Request ->
-                    val segment = request.url.pathSegments[0]
-                    mAssetManager.open(String.format("mock/%s.json", segment)).source().buffer().readUtf8()
-                }
+                .enableAndroidStudioV3LogsHack(true)
+//                .logger(object : Logger {
+//                    override fun log(level: Int, tag: String?, msg: String?) {
+//                        Log.e("$tag - $level", "$msg")
+//                    }
+//                })
+                .enableMock(BuildConfig.MOCK, 1000L, object : BufferListener {
+                    override fun getJsonResponse(request: Request?): String? {
+                        val segment = request?.url?.pathSegments?.getOrNull(0)
+                        return mAssetManager.open(String.format("mock/%s.json", segment)).source().buffer().readUtf8()
+                    }
+                })
                 .executor(Executors.newSingleThreadExecutor())
                 .build())
         return client.build()

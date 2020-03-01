@@ -4,26 +4,17 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     //noinspection GradleDependency
 
     defaultConfig {
         applicationId "ihsanbal.com.logginginterceptor"
-        minSdkVersion 14
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         buildConfigField("boolean", "MOCK", "false")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    signingConfigs {
-        debug {
-            storeFile rootProject.file("${System.properties['user.home']}/.android/debug.keystore")
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-            storePassword 'android'
-        }
     }
 
     compileOptions {
@@ -41,14 +32,12 @@ android {
     buildTypes {
         mock {
             debuggable true
-            signingConfig signingConfigs.debug
             buildConfigField("boolean", "MOCK", "true")
         }
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-
 }
 
 dependencies {

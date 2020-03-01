@@ -60,7 +60,7 @@ class MainActivity : BaseCompatActivity() {
         api.post(Body())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe { Log.w("onNext", it?.string()); }
+                .subscribe { log(it) }
     }
 
     private fun callZip() {
@@ -72,39 +72,43 @@ class MainActivity : BaseCompatActivity() {
                 .subscribeOn(Schedulers.io())
         Observable.zip(observablePost, observableGet) { o: ResponseBody?, _: ResponseBody? -> o }.subscribe {
             try {
-                Log.w("onNext", it?.string())
+                log(it)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
     }
 
+    private fun log(it: ResponseBody?) {
+        Log.w("onNext", "${it?.string()}")
+    }
+
     private fun callGet() {
         api.get()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe { Log.w("onNext", it?.string()); }
+                .subscribe { log(it) }
     }
 
     private fun callDelete() {
         api.delete()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe { Log.w("onNext", it?.string()); }
+                .subscribe { log(it) }
     }
 
     private fun callPatch() {
         api.patch("q2")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe { Log.w("onNext", it?.string()); }
+                .subscribe { log(it) }
     }
 
     private fun callPut() {
         api.put()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe { Log.w("onNext", it?.string()); }
+                .subscribe { log(it) }
     }
 
     private fun callPdf() {
@@ -156,13 +160,14 @@ class MainActivity : BaseCompatActivity() {
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
     }
 
+    @Suppress("DEPRECATION")
     @Throws(IOException::class)
     private fun downloadFile(body: ResponseBody) {
         var count: Int
         val data = ByteArray(1024 * 4)
         val bis: InputStream = BufferedInputStream(body.byteStream(), 1024 * 8)
         outputFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "file.zip")
-        val output: OutputStream = FileOutputStream(outputFile)
+        val output: OutputStream = FileOutputStream(outputFile!!)
         while (bis.read(data).also { count = it } != -1) {
             output.write(data, 0, count)
         }

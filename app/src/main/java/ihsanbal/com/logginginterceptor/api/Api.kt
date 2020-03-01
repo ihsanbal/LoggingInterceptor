@@ -11,7 +11,7 @@ import rx.Observable
  * @author ihsan on 09/02/2017.
  */
 interface Api {
-    @GET("get")
+    @GET("get?test=123")
     fun get(): Observable<ResponseBody?>
 
     @DELETE("delete")

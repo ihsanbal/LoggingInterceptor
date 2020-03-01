@@ -15,7 +15,7 @@ class LogApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appComponent = DaggerNetComponent.builder()
-                .netModule(NetModule("http://demo2961085.mockable.io/", assets))
+                .netModule(NetModule("http://postman-echo.com/", assets))
                 .build()
     }
 

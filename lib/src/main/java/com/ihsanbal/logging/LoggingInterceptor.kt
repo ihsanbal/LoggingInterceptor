@@ -1,10 +1,13 @@
 package com.ihsanbal.logging
 
-import okhttp3.Interceptor
-import okhttp3.Response
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.internal.platform.Platform.Companion.INFO
 import java.util.*
 import java.util.concurrent.Executor
+import java.util.concurrent.TimeUnit
+
 
 /**
  * @author ihsan on 09/02/2017.
@@ -14,7 +17,73 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
     private val isDebug: Boolean
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        TODO()
+        val request = addQueryAndHeaders(chain.request())
+
+        if (!isDebug || builder.level == Level.NONE) {
+            return chain.proceed(request)
+        }
+
+        Printer.printJsonRequest(
+                builder,
+                request.body,
+                request.url.toUrl().toString(),
+                request.headers,
+                request.method)
+
+        val startNs = System.nanoTime()
+        val response: Response
+        try {
+            response = proceedResponse(chain, request)
+        } catch (e: Exception) {
+            Printer.printFailed(builder.getTag(false), builder)
+            throw e
+        }
+        val receivedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
+
+        Printer.printJsonResponse(
+                builder,
+                receivedMs,
+                response.isSuccessful,
+                response.code,
+                response.headers,
+                response,
+                request.url.encodedPathSegments,
+                response.message,
+                request.url.toString())
+        return response
+    }
+
+    private fun proceedResponse(chain: Interceptor.Chain, request: Request): Response {
+        return if (builder.isMockEnabled && builder.listener != null) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(builder.sleepMs)
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+            Response.Builder()
+                    .body(builder.listener!!.getJsonResponse(request)?.toResponseBody("application/json".toMediaTypeOrNull()))
+                    .request(chain.request())
+                    .protocol(Protocol.HTTP_2)
+                    .message("Mock data from LoggingInterceptor")
+                    .code(200)
+                    .build()
+        } else chain.proceed(request)
+    }
+
+    private fun addQueryAndHeaders(request: Request): Request {
+        val requestBuilder = request.newBuilder()
+        builder.headers.keys.forEach { key ->
+            builder.headers[key]?.let {
+                requestBuilder.addHeader(key, it)
+            }
+        }
+        val httpUrlBuilder: HttpUrl.Builder? = request.url.newBuilder(request.url.toString())
+        httpUrlBuilder?.let {
+            builder.httpUrl.keys.forEach { key ->
+                httpUrlBuilder.addQueryParameter(key, builder.httpUrl[key])
+            }
+        }
+        return request.newBuilder().url(httpUrlBuilder?.build()!!).build()
     }
 
     @Suppress("unused")
