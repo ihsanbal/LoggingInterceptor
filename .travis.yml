@@ -4,8 +4,8 @@ android:
   components:
     - tools
     - platform-tools
-    - build-tools-27.0.3
-    - android-27
+    - build-tools-29.0.6
+    - android-29
     - extra-android-m2repository
 
 jdk:
@@ -30,6 +30,7 @@ branches:
     - master
     - development
     - fix
+    - release/3.0
 
 cache:
   directories:
