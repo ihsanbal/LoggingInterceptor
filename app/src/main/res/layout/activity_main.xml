@@ -7,49 +7,49 @@
     android:orientation="vertical"
     tools:context=".ui.MainActivity">
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button.post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_post" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button.zip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_zip" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button.get"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_get" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button.delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_delete" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button.patch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_patch" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button.put"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_put" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button.pdf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_pdf" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button.pdf.upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
