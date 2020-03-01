@@ -1,12 +1,17 @@
 language: android
+dist: trusty
 
 android:
   components:
     - tools
     - platform-tools
-    - build-tools-27.0.3
-    - android-27
+    - build-tools-29.0.3
+    - android-29
     - extra-android-m2repository
+  licenses:
+    - 'android-sdk-preview-license-52d11cd2'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
 
 jdk:
   - oraclejdk8
@@ -14,22 +19,21 @@ jdk:
 notifications:
   email: false
 
-sudo: false
-
 before_install:
- - chmod +x gradlew
+  - yes | sdkmanager "platforms;android-28"
 
 script:
-- ./gradlew assembleDebug
+  - ./gradlew assembleDebug
 
 after_script:
-- ./gradlew testReleaseUnitTest
+  - ./gradlew testReleaseUnitTest
 
 branches:
   only:
     - master
     - development
     - fix
+    - release/3.0
 
 cache:
   directories:

@@ -1,11 +1,9 @@
 package ihsanbal.com.logginginterceptor.di
 
 import android.content.res.AssetManager
-import android.util.Log
 import android.util.Log.INFO
 import com.ihsanbal.logging.BufferListener
 import com.ihsanbal.logging.Level
-import com.ihsanbal.logging.Logger
 import com.ihsanbal.logging.LoggingInterceptor
 import dagger.Module
 import dagger.Provides
