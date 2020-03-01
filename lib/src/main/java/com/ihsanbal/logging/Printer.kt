@@ -4,12 +4,12 @@ import okhttp3.Headers
 import okhttp3.RequestBody
 import okhttp3.Response
 import okhttp3.internal.http.promisesBody
-import okhttp3.logging.isProbablyUtf8
 import okio.Buffer
 import okio.GzipSource
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.EOFException
 import java.io.IOException
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
@@ -100,7 +100,6 @@ open class Printer protected constructor() {
 
                 if (!buffer.isProbablyUtf8()) {
                     return "End request - binary ${buffer.size}:byte body omitted"
-//                    return response
                 }
 
                 if (contentLength != 0L) {
@@ -246,5 +245,28 @@ open class Printer protected constructor() {
 
     init {
         throw UnsupportedOperationException()
+    }
+}
+
+/**
+ * @see 'https://github.com/square/okhttp/blob/master/okhttp-logging-interceptor/src/main/java/okhttp3/logging/utf8.kt'
+ * */
+internal fun Buffer.isProbablyUtf8(): Boolean {
+    try {
+        val prefix = Buffer()
+        val byteCount = size.coerceAtMost(64)
+        copyTo(prefix, 0, byteCount)
+        for (i in 0 until 16) {
+            if (prefix.exhausted()) {
+                break
+            }
+            val codePoint = prefix.readUtf8CodePoint()
+            if (Character.isISOControl(codePoint) && !Character.isWhitespace(codePoint)) {
+                return false
+            }
+        }
+        return true
+    } catch (_: EOFException) {
+        return false // Truncated UTF-8 sequence.
     }
 }

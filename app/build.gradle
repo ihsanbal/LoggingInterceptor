@@ -58,12 +58,12 @@ dependencies {
     releaseApi 'com.squareup.leakcanary:leakcanary-android-no-op:' + leakCanaryVersion
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:' + leakCanaryVersion
     compileOnly 'javax.annotation:jsr250-api:1.0'
-    implementation(project(':lib')) {
-        exclude group: 'org.json', module: 'json'
-    }
-//    implementation('com.github.ihsanbal:LoggingInterceptor:3.0.0') {
+//    implementation(project(':lib')) {
 //        exclude group: 'org.json', module: 'json'
 //    }
+    implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0-rc1') {
+        exclude group: 'org.json', module: 'json'
+    }
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:rules:1.2.0'

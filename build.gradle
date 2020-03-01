@@ -10,10 +10,11 @@ buildscript {
     ext.rxjavaVersion = '1.0.10'
     ext.rxAndroidVersion = '1.0.1'
     ext.daggerVersion = '2.8'
-    ext.supportVersion = '26.1.0'
+    ext.supportVersion = '29.0.3'
     ext.leakCanaryVersion = '1.5'
 
     repositories {
+        mavenLocal()
         jcenter()
         google()
     }
@@ -27,7 +28,7 @@ buildscript {
 project.ext {
     groupId = 'com.github.ihsanbal'
     artifactId = 'LoggingInterceptor'
-    snapshot = '3.0.0-SNAPSHOT'
+    snapshot = '3.1.0-rc1'
 }
 
 allprojects {
