@@ -1,4 +1,5 @@
 language: android
+dist: trusty
 
 android:
   components:
@@ -7,6 +8,10 @@ android:
     - build-tools-29.0.6
     - android-29
     - extra-android-m2repository
+  licenses:
+    - 'android-sdk-preview-license-52d11cd2'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
 
 jdk:
   - oraclejdk8
@@ -15,13 +20,13 @@ notifications:
   email: false
 
 before_install:
- - chmod +x gradlew
+  - chmod +x gradlew
 
 script:
-- ./gradlew assembleDebug
+  - ./gradlew assembleDebug
 
 after_script:
-- ./gradlew testReleaseUnitTest
+  - ./gradlew testReleaseUnitTest
 
 branches:
   only:
