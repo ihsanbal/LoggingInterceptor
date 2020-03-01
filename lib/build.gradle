@@ -16,4 +16,4 @@ dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: okhttpVersion
 }
 
-//apply from: '../pTML.gradle'
+apply from: '../pTML.gradle'
