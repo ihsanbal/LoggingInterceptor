@@ -9,8 +9,8 @@ import ihsanbal.com.logginginterceptor.di.NetModule
  * @author ihsan on 09/02/2017.
  */
 class LogApplication : Application() {
+
     var appComponent: NetComponent? = null
-        private set
 
     override fun onCreate() {
         super.onCreate()

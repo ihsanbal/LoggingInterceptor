@@ -16,7 +16,6 @@ import okio.source
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.Executors
 import javax.inject.Singleton
 
 /**
@@ -24,6 +23,7 @@ import javax.inject.Singleton
  */
 @Module
 class NetModule(private val mEndPoint: String, private val mAssetManager: AssetManager) {
+
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
@@ -34,7 +34,7 @@ class NetModule(private val mEndPoint: String, private val mAssetManager: AssetM
                 .log(INFO)
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .addQueryParam("query", "0")
-                .enableAndroidStudioV3LogsHack(true)
+//                .enableAndroidStudioV3LogsHack(true)
 //                .logger(object : Logger {
 //                    override fun log(level: Int, tag: String?, msg: String?) {
 //                        Log.e("$tag - $level", "$msg")
@@ -46,7 +46,6 @@ class NetModule(private val mEndPoint: String, private val mAssetManager: AssetM
                         return mAssetManager.open(String.format("mock/%s.json", segment)).source().buffer().readUtf8()
                     }
                 })
-                .executor(Executors.newSingleThreadExecutor())
                 .build())
         return client.build()
     }

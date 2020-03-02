@@ -21,14 +21,14 @@ buildscript {
     dependencies {
         //noinspection
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:3.6.1'
     }
 }
 
 project.ext {
     groupId = 'com.github.ihsanbal'
     artifactId = 'LoggingInterceptor'
-    snapshot = '3.1.0-rc1'
+    snapshot = '3.1.0-rc2'
 }
 
 allprojects {

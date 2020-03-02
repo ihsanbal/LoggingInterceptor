@@ -23,12 +23,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
             return chain.proceed(request)
         }
 
-        Printer.printJsonRequest(
-                builder,
-                request.body,
-                request.url.toUrl().toString(),
-                request.headers,
-                request.method)
+        printlnRequestLog(request)
 
         val startNs = System.nanoTime()
         val response: Response
@@ -40,6 +35,11 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         }
         val receivedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
 
+        printlnResponseLog(receivedMs, response, request)
+        return response
+    }
+
+    private fun printlnResponseLog(receivedMs: Long, response: Response, request: Request) {
         Printer.printJsonResponse(
                 builder,
                 receivedMs,
@@ -50,16 +50,20 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
                 request.url.encodedPathSegments,
                 response.message,
                 request.url.toString())
-        return response
+    }
+
+    private fun printlnRequestLog(request: Request) {
+        Printer.printJsonRequest(
+                builder,
+                request.body,
+                request.url.toUrl().toString(),
+                request.headers,
+                request.method)
     }
 
     private fun proceedResponse(chain: Interceptor.Chain, request: Request): Response {
         return if (builder.isMockEnabled && builder.listener != null) {
-            try {
-                TimeUnit.MILLISECONDS.sleep(builder.sleepMs)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
+            TimeUnit.MILLISECONDS.sleep(builder.sleepMs)
             Response.Builder()
                     .body(builder.listener!!.getJsonResponse(request)?.toResponseBody("application/json".toMediaTypeOrNull()))
                     .request(chain.request())
@@ -83,7 +87,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
                 httpUrlBuilder.addQueryParameter(key, builder.httpUrl[key])
             }
         }
-        return request.newBuilder().url(httpUrlBuilder?.build()!!).build()
+        return requestBuilder.url(httpUrlBuilder?.build()!!).build()
     }
 
     @Suppress("unused")
@@ -100,8 +104,6 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         var level = Level.BASIC
             private set
         var logger: Logger? = null
-            private set
-        var executor: Executor? = null
             private set
         var isMockEnabled = false
         var sleepMs: Long = 0
@@ -213,9 +215,9 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
          * @return Builder
          * @see Logger
          */
+        @Deprecated(message = "Create your own Logcat filter for best result", level = DeprecationLevel.ERROR)
         fun executor(executor: Executor?): Builder {
-            this.executor = executor
-            return this
+            TODO("Deprecated")
         }
 
         /**
@@ -240,6 +242,8 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
          * @return Builder
          * @see Logger
          */
+        @Deprecated(message = "Android studio has resolved problem for latest versions",
+                level = DeprecationLevel.WARNING)
         fun enableAndroidStudioV3LogsHack(useHack: Boolean): Builder {
             isLogHackEnable = useHack
             return this
