@@ -15,39 +15,14 @@ LoggingInterceptor - Interceptor for [OkHttp3](https://github.com/square/okhttp)
 Usage
 --------
 
-```java
-
-OkHttpClient.Builder client = new OkHttpClient.Builder();
-        client.addInterceptor(new LoggingInterceptor.Builder()
-                .loggable(BuildConfig.DEBUG)
-                .setLevel(Level.BASIC)
-                .log(Platform.INFO)
-                .request("Request")
-                .response("Response")
-                .addHeader("version", BuildConfig.VERSION_NAME)
-                .addQueryParam("query", "0")
-		.enableMock(true, 1000L, request -> {
-                    String segment = request.url().pathSegments().get(0);
-                    return Okio.buffer(Okio.source(mAssetManager.open(String.format("mock/%s.json", segment)))).readUtf8();
-                })
-//              .enableAndroidStudio_v3_LogsHack(true) /* enable fix for logCat logging issues with pretty format */
-//              .logger(new Logger() {
-//                  @Override
-//                  public void log(int level, String tag, String msg) {
-//                      Log.w(tag, msg);
-//                  }
-//              })
-//              .executor(Executors.newSingleThreadExecutor())
-               .build());
-        OkHttpClient okHttpClient = client.build();
-
-//You can use with Retrofit
-Retrofit retrofitAdapter = new Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .baseUrl("https://.../")
-            .client(okHttpClient)
-            .build();
+```kotlin
+    val client = OkHttpClient.Builder()
+        client.addInterceptor(LoggingInterceptor.Builder()
+                 .setLevel(Level.BASIC)
+                 .log(VERBOSE)
+                 .addHeader("cityCode","53")
+                 .addQueryParam("moonStatus", "crescent")
+                 .build())
 ```
 
 Download
@@ -57,13 +32,12 @@ Gradle:
 ```groovy
 allprojects {
 	repositories {
-		...
 		maven { url 'https://jitpack.io' }
 	}
 }
 
 dependencies {
-	compile('com.github.ihsanbal:LoggingInterceptor:3.0.0') {
+	compile('com.github.ihsanbal:LoggingInterceptor:3.1.0-rc3') {
         	exclude group: 'org.json', module: 'json'
     	}
 }
@@ -79,19 +53,34 @@ Maven:
 <dependency>
 	    <groupId>com.github.ihsanbal</groupId>
 	    <artifactId>LoggingInterceptor</artifactId>
-	    <version>3.0.0</version>
+	    <version>3.1.0-rc3</version>
 </dependency>
 ```
 
 
-Executor
---------
-Add executor for allows to perform sequential concurrent print.
+Logger & Mock Support
+---------------------
+```kotlin
+       LoggingInterceptor.Builder()
+            //Add logger to print log as plain text
+            .logger(object : Logger {
+                  override fun log(level: Int, tag: String?, msg: String?) {
+                      Log.e("$tag - $level", "$msg")
+                  }
+              })
+              //Enable mock for develop app with mock data
+              .enableMock(BuildConfig.MOCK, 1000L, object : BufferListener {
+                  override fun getJsonResponse(request: Request?): String? {
+                      val segment = request?.url?.pathSegments?.getOrNull(0)
+                      return mAssetManager.open(String.format("mock/%s.json", segment)).source().buffer().readUtf8()
+                  }
+              })
+```	
 
 Level
 --------
 
-```java
+```kotlin
 setLevel(Level.BASIC)
 	      .NONE // No logs
 	      .BASIC // Logging url,method,headers and body.
@@ -102,15 +91,14 @@ setLevel(Level.BASIC)
 Platform - [Platform](https://github.com/square/okhttp/blob/master/okhttp/src/main/java/okhttp3/internal/platform/Platform.java)
 --------
 
-```java
-loggable(BuildConfig.DEBUG) // enable/disable sending logs output.
+```kotlin
 log(Platform.WARN) // setting log type
 ```
 
 Tag
 --------
 
-```java
+```kotlin
 tag("LoggingI") // Request & response each log tag
 request("request") // Request log tag
 response("response") // Response log tag
@@ -120,7 +108,7 @@ response("response") // Response log tag
 Header - [Recipes](https://github.com/square/okhttp/wiki/Recipes)
 --------
 
-```java
+```kotlin
 addHeader("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 ") // Adding to request
 ```
 

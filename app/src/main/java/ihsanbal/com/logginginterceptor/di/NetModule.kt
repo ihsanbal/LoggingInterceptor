@@ -1,8 +1,7 @@
 package ihsanbal.com.logginginterceptor.di
 
 import android.content.res.AssetManager
-import android.util.Log.INFO
-import com.ihsanbal.logging.BufferListener
+import android.util.Log.VERBOSE
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
 import dagger.Module
@@ -10,9 +9,6 @@ import dagger.Provides
 import ihsanbal.com.logginginterceptor.BuildConfig
 import ihsanbal.com.logginginterceptor.api.Api
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okio.buffer
-import okio.source
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -29,23 +25,21 @@ class NetModule(private val mEndPoint: String, private val mAssetManager: AssetM
     fun provideOkHttpClient(): OkHttpClient {
         val client = OkHttpClient.Builder()
         client.addInterceptor(LoggingInterceptor.Builder()
-                .loggable(BuildConfig.DEBUG)
                 .setLevel(Level.BASIC)
-                .log(INFO)
+                .log(VERBOSE)
                 .addHeader("version", BuildConfig.VERSION_NAME)
                 .addQueryParam("query", "0")
-//                .enableAndroidStudioV3LogsHack(true)
-//                .logger(object : Logger {
-//                    override fun log(level: Int, tag: String?, msg: String?) {
-//                        Log.e("$tag - $level", "$msg")
-//                    }
-//                })
-                .enableMock(BuildConfig.MOCK, 1000L, object : BufferListener {
-                    override fun getJsonResponse(request: Request?): String? {
-                        val segment = request?.url?.pathSegments?.getOrNull(0)
-                        return mAssetManager.open(String.format("mock/%s.json", segment)).source().buffer().readUtf8()
-                    }
-                })
+//              .logger(object : Logger {
+//                  override fun log(level: Int, tag: String?, msg: String?) {
+//                      Log.e("$tag - $level", "$msg")
+//                  }
+//              })
+//              .enableMock(BuildConfig.MOCK, 1000L, object : BufferListener {
+//                  override fun getJsonResponse(request: Request?): String? {
+//                      val segment = request?.url?.pathSegments?.getOrNull(0)
+//                      return mAssetManager.open(String.format("mock/%s.json", segment)).source().buffer().readUtf8()
+//                  }
+//              })
                 .build())
         return client.build()
     }

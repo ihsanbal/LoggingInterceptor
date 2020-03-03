@@ -96,7 +96,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         val httpUrl: HashMap<String, String> = HashMap()
         var isLogHackEnable = false
             private set
-        var isDebug = false
+        var isDebugAble = false
         var type: Int = INFO
             private set
         private var requestTag: String? = null
@@ -185,8 +185,11 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
          * @param isDebug set can sending log output
          * @return Builder
          */
+        @Deprecated(message = "Set level based on your requirement",
+                replaceWith = ReplaceWith(expression = "setLevel(Level.Basic)"),
+                level = DeprecationLevel.ERROR)
         fun loggable(isDebug: Boolean): Builder {
-            this.isDebug = isDebug
+            this.isDebugAble = isDebug
             return this
         }
 
@@ -259,6 +262,6 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
     }
 
     init {
-        isDebug = builder.isDebug
+        isDebug = builder.isDebugAble
     }
 }
