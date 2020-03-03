@@ -16,13 +16,13 @@ Usage
 --------
 
 ```kotlin
-    val client = OkHttpClient.Builder()
-        client.addInterceptor(LoggingInterceptor.Builder()
-                 .setLevel(Level.BASIC)
-                 .log(VERBOSE)
-                 .addHeader("cityCode","53")
-                 .addQueryParam("moonStatus", "crescent")
-                 .build())
+val client = OkHttpClient.Builder()
+    client.addInterceptor(LoggingInterceptor.Builder()
+             .setLevel(Level.BASIC)
+             .log(VERBOSE)
+             .addHeader("cityCode","53")
+             .addQueryParam("moonStatus", "crescent")
+             .build())
 ```
 
 Download
@@ -51,9 +51,9 @@ Maven:
 </repository>
 
 <dependency>
-	    <groupId>com.github.ihsanbal</groupId>
-	    <artifactId>LoggingInterceptor</artifactId>
-	    <version>3.1.0-rc3</version>
+    <groupId>com.github.ihsanbal</groupId>
+    <artifactId>LoggingInterceptor</artifactId>
+    <version>3.1.0-rc3</version>
 </dependency>
 ```
 
@@ -61,20 +61,20 @@ Maven:
 Logger & Mock Support
 ---------------------
 ```kotlin
-       LoggingInterceptor.Builder()
-            //Add logger to print log as plain text
-            .logger(object : Logger {
-                  override fun log(level: Int, tag: String?, msg: String?) {
-                      Log.e("$tag - $level", "$msg")
-                  }
-              })
-              //Enable mock for develop app with mock data
-              .enableMock(BuildConfig.MOCK, 1000L, object : BufferListener {
-                  override fun getJsonResponse(request: Request?): String? {
-                      val segment = request?.url?.pathSegments?.getOrNull(0)
-                      return mAssetManager.open(String.format("mock/%s.json", segment)).source().buffer().readUtf8()
-                  }
-              })
+LoggingInterceptor.Builder()
+    //Add logger to print log as plain text
+    .logger(object : Logger {
+          override fun log(level: Int, tag: String?, msg: String?) {
+              Log.e("$tag - $level", "$msg")
+          }
+      })
+      //Enable mock for develop app with mock data
+      .enableMock(BuildConfig.MOCK, 1000L, object : BufferListener {
+          override fun getJsonResponse(request: Request?): String? {
+              val segment = request?.url?.pathSegments?.getOrNull(0)
+              return mAssetManager.open(String.format("mock/%s.json", segment)).source().buffer().readUtf8()
+          }
+      })
 ```	
 
 Level
