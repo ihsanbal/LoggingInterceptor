@@ -14,12 +14,10 @@ import java.util.concurrent.TimeUnit
  */
 class LoggingInterceptor private constructor(private val builder: Builder) : Interceptor {
 
-    private val isDebug: Boolean
-
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = addQueryAndHeaders(chain.request())
 
-        if (!isDebug || builder.level == Level.NONE) {
+        if (builder.level == Level.NONE) {
             return chain.proceed(request)
         }
 
@@ -259,9 +257,5 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         companion object {
             private var TAG = "LoggingI"
         }
-    }
-
-    init {
-        isDebug = builder.isDebugAble
     }
 }
