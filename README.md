@@ -37,7 +37,7 @@ allprojects {
 }
 
 dependencies {
-	implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0-rc4') {
+	implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0-rc5') {
         	exclude group: 'org.json', module: 'json'
     	}
 }
@@ -53,7 +53,7 @@ Maven:
 <dependency>
     <groupId>com.github.ihsanbal</groupId>
     <artifactId>LoggingInterceptor</artifactId>
-    <version>3.1.0-rc4</version>
+    <version>3.1.0-rc5</version>
 </dependency>
 ```
 

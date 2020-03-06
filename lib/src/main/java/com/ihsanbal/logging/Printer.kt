@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets
 /**
  * @author ihsan on 09/02/2017.
  */
-open class Printer protected constructor() {
+class Printer private constructor() {
     companion object {
         private const val JSON_INDENT = 3
         private val LINE_SEPARATOR = System.getProperty("line.separator")
@@ -40,7 +40,9 @@ open class Printer protected constructor() {
         }
 
         fun printJsonRequest(builder: LoggingInterceptor.Builder, body: RequestBody?, url: String, header: Headers, method: String) {
-            val requestBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + bodyToString(body, header)
+            val requestBody = body?.let {
+                LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + bodyToString(body, header)
+            } ?: ""
             val tag = builder.getTag(true)
             if (builder.logger == null) I.log(builder.type, tag, REQUEST_UP_LINE, builder.isLogHackEnable)
             logLines(builder.type, tag, arrayOf(URL_TAG + url), builder.logger, false, builder.isLogHackEnable)
@@ -77,7 +79,7 @@ open class Printer protected constructor() {
             val headers = response.headers
             val contentLength = responseBody.contentLength()
             if (!response.promisesBody()) {
-                return "End request - Promoses Body"
+                return "End request - Promises Body"
             } else if (bodyHasUnknownEncoding(response.headers)) {
                 return "encoded body omitted"
             } else {
@@ -151,7 +153,7 @@ open class Printer protected constructor() {
             headers.forEach { pair ->
                 builder.append("${pair.first}: ${pair.second}").append(N)
             }
-            return builder.toString()
+            return builder.dropLast(1).toString()
         }
 
         private fun logLines(type: Int, tag: String, lines: Array<String>, logger: Logger?,
@@ -203,7 +205,7 @@ open class Printer protected constructor() {
                 } catch (e: IOException) {
                     "{\"err\": \"" + e.message + "\"}"
                 }
-            } ?: "{\"err\": \"$requestBody\"}"
+            } ?: ""
         }
 
         private fun bodyHasUnknownEncoding(headers: Headers): Boolean {
