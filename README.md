@@ -37,7 +37,7 @@ allprojects {
 }
 
 dependencies {
-	compile('com.github.ihsanbal:LoggingInterceptor:3.1.0-rc3') {
+	implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0-rc3') {
         	exclude group: 'org.json', module: 'json'
     	}
 }
