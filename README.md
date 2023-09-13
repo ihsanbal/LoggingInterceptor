@@ -29,6 +29,8 @@ Download
 --------
 
 Gradle:
+
+Groovy
 ```groovy
 allprojects {
 	repositories {
@@ -41,6 +43,23 @@ dependencies {
         	exclude group: 'org.json', module: 'json'
     	}
 }
+```
+
+kotlin DSL
+```
+allprojects {
+	repositories {
+		maven { setUrl("https://jitpack.io") }
+	}
+}
+
+
+dependencies {
+	implementation("com.github.ihsanbal:LoggingInterceptor:3.1.0") {
+        	exclude(group = "org.json", module = "json")
+    	}
+}
+
 ```
 
 Maven:
