@@ -69,7 +69,8 @@ to avoid interleaving in Logcat. Example (using the bundled `BatchingSink`, now 
 
 ```kotlin
 val sink = BatchingSink(LogSink { type, tag, message ->
-    Log.println(type, tag, message) // or forward to your own logger/queue
+    // Logcat truncates ~4k per line; forward to your own chunker if needed
+    Log.println(type, tag, message)
 })
 
 val client = OkHttpClient.Builder()
@@ -81,6 +82,8 @@ val client = OkHttpClient.Builder()
             .build()
     )
     .build()
+
+If you need chunking/queuing (e.g., Logcat 4k limit), wrap the `LogSink` to your own queue before passing to `BatchingSink`, similar to the sample above.
 ```
 
 If you want the forked artifact via JitPack:
