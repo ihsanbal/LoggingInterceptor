@@ -26,9 +26,9 @@ buildscript {
 }
 
 project.ext {
-    groupId = 'com.github.ihsanbal'
-    artifactId = 'LoggingInterceptor'
-    snapshot = '3.1.0-rc2'
+    groupId = project.findProperty("group") ?: 'com.github.ihsanbal'
+    artifactId = project.findProperty("artifactId") ?: 'LoggingInterceptor'
+    snapshot = project.findProperty("version") ?: '3.1.0-rc2'
 }
 
 allprojects {
