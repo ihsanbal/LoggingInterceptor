@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Batches all lines for a request/response and flushes them as one block.
  */
 internal class BatchingSink(
-    private val delegate: LogSink,
+    private val delegate: LogSink
 ) : LogSink {
 
     private data class BufferKey(val tag: String)
@@ -27,4 +27,3 @@ internal class BatchingSink(
         }
     }
 }
-
