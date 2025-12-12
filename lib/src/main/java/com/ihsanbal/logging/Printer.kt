@@ -128,10 +128,12 @@ class Printer private constructor() {
         }
 
         private fun emit(builder: LoggingInterceptor.Builder, tag: String, line: String) {
+            val sink = builder.sink
+            val logger = builder.logger
             when {
-                builder.sink != null -> builder.sink.log(builder.type, tag, line)
-                builder.logger == null -> I.log(builder.type, tag, line, builder.isLogHackEnable)
-                else -> builder.logger.log(builder.type, tag, line)
+                sink != null -> sink.log(builder.type, tag, line)
+                logger == null -> I.log(builder.type, tag, line, builder.isLogHackEnable)
+                else -> logger.log(builder.type, tag, line)
             }
         }
 
