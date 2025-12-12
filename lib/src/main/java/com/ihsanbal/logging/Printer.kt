@@ -44,13 +44,15 @@ class Printer private constructor() {
                 LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + bodyToString(body, header)
             } ?: ""
             val tag = builder.getTag(true)
-            if (builder.logger == null) I.log(builder.type, tag, REQUEST_UP_LINE, builder.isLogHackEnable)
-            logLines(builder.type, tag, arrayOf(URL_TAG + url), builder.logger, false, builder.isLogHackEnable)
-            logLines(builder.type, tag, getRequest(builder.level, header, method), builder.logger, true, builder.isLogHackEnable)
+            val sink = builder.sink
+            if (builder.logger == null && sink == null) I.log(builder.type, tag, REQUEST_UP_LINE, builder.isLogHackEnable, sink)
+            logLines(builder.type, tag, arrayOf(URL_TAG + url), builder.logger, false, builder.isLogHackEnable, sink)
+            logLines(builder.type, tag, getRequest(builder.level, header, method), builder.logger, true, builder.isLogHackEnable, sink)
             if (builder.level == Level.BASIC || builder.level == Level.BODY) {
-                logLines(builder.type, tag, requestBody.split(LINE_SEPARATOR).toTypedArray(), builder.logger, true, builder.isLogHackEnable)
+                logLines(builder.type, tag, requestBody.split(LINE_SEPARATOR).toTypedArray(), builder.logger, true, builder.isLogHackEnable, sink)
             }
-            if (builder.logger == null) I.log(builder.type, tag, END_LINE, builder.isLogHackEnable)
+            if (builder.logger == null && sink == null) I.log(builder.type, tag, END_LINE, builder.isLogHackEnable, sink)
+            sink?.close(builder.type, tag)
         }
 
         fun printJsonResponse(builder: LoggingInterceptor.Builder, chainMs: Long, isSuccessful: Boolean,
@@ -58,18 +60,20 @@ class Printer private constructor() {
             val responseBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + getResponseBody(response)
             val tag = builder.getTag(false)
             val statusLine = getStatusLine(chainMs, code, message)
-            if (builder.logger == null) {
-                I.log(builder.type, tag, RESPONSE_UP_LINE, builder.isLogHackEnable)
+            val sink = builder.sink
+            if (builder.logger == null && sink == null) {
+                I.log(builder.type, tag, RESPONSE_UP_LINE, builder.isLogHackEnable, sink)
             }
-            logLines(builder.type, tag, arrayOf(URL_TAG + responseUrl), builder.logger, false, builder.isLogHackEnable)
-            logLines(builder.type, tag, statusLine, builder.logger, true, builder.isLogHackEnable)
+            logLines(builder.type, tag, arrayOf(URL_TAG + responseUrl), builder.logger, false, builder.isLogHackEnable, sink)
+            logLines(builder.type, tag, statusLine, builder.logger, true, builder.isLogHackEnable, sink)
             if (builder.level == Level.BASIC || builder.level == Level.BODY) {
                 logLines(builder.type, tag, responseBody.split(LINE_SEPARATOR).toTypedArray(), builder.logger,
-                        true, builder.isLogHackEnable)
+                        true, builder.isLogHackEnable, sink)
             }
-            if (builder.logger == null) {
-                I.log(builder.type, tag, END_LINE, builder.isLogHackEnable)
+            if (builder.logger == null && sink == null) {
+                I.log(builder.type, tag, END_LINE, builder.isLogHackEnable, sink)
             }
+            sink?.close(builder.type, tag)
         }
 
         private fun getResponseBody(response: Response): String {
@@ -144,7 +148,7 @@ class Printer private constructor() {
         }
 
         private fun logLines(type: Int, tag: String, lines: Array<String>, logger: Logger?,
-                             withLineSize: Boolean, useLogHack: Boolean) {
+                             withLineSize: Boolean, useLogHack: Boolean, sink: LogSink? = null) {
             for (line in lines) {
                 val lineLength = line.length
                 val maxLogSize = if (withLineSize) 110 else lineLength
@@ -152,10 +156,11 @@ class Printer private constructor() {
                     val start = i * maxLogSize
                     var end = (i + 1) * maxLogSize
                     end = if (end > line.length) line.length else end
-                    if (logger == null) {
-                        I.log(type, tag, DEFAULT_LINE + line.substring(start, end), useLogHack)
-                    } else {
-                        logger.log(type, tag, line.substring(start, end))
+                    val chunk = DEFAULT_LINE + line.substring(start, end)
+                    when {
+                        sink != null -> sink.log(type, tag, chunk)
+                        logger == null -> I.log(type, tag, chunk, useLogHack)
+                        else -> logger.log(type, tag, chunk)
                     }
                 }
             }

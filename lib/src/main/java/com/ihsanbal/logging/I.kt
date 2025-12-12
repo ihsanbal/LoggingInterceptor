@@ -11,7 +11,12 @@ internal open class I protected constructor() {
         private val prefix = arrayOf(". ", " .")
         private var index = 0
 
-        fun log(type: Int, tag: String, msg: String?, isLogHackEnable: Boolean) {
+        fun log(type: Int, tag: String, msg: String?, isLogHackEnable: Boolean, sink: LogSink? = null) {
+            if (sink != null) {
+                sink.log(type, tag, msg ?: "")
+                return
+            }
+
             val finalTag = getFinalTag(tag, isLogHackEnable)
 
             if (!logWithAndroid(type, finalTag, msg)) {

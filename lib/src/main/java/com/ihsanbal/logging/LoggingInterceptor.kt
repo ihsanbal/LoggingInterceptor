@@ -106,6 +106,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
             private set
         var logger: Logger? = null
             private set
+        var sink: LogSink? = null
         var isMockEnabled = false
         var sleepMs: Long = 0
         var listener: BufferListener? = null
@@ -250,6 +251,15 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
                 level = DeprecationLevel.WARNING)
         fun enableAndroidStudioV3LogsHack(useHack: Boolean): Builder {
             isLogHackEnable = useHack
+            return this
+        }
+
+        /**
+         * Override the default line logger with a sink. If both logger and sink
+         * are set, sink takes precedence.
+         */
+        fun sink(sink: LogSink): Builder {
+            this.sink = sink
             return this
         }
 
