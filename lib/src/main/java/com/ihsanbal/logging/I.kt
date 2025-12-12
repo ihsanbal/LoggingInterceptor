@@ -27,7 +27,7 @@ internal open class I protected constructor() {
                     "println",
                     Int::class.javaPrimitiveType,
                     String::class.java,
-                    String::class.java,
+                    String::class.java
                 )
                 printlnMethod.invoke(null, type, tag, msg ?: "")
                 true
