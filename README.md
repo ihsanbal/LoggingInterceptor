@@ -65,13 +65,11 @@ dependencies {
 ## Batching and custom sinks (fork feature)
 
 This fork adds a `sink(...)` API so you can batch a whole request/response block before logging
-to avoid interleaving in Logcat. Example:
+to avoid interleaving in Logcat. Example (using the bundled `BatchingSink`, now public):
 
 ```kotlin
-val sink = BatchingSink(object : LogSink {
-    override fun log(type: Int, tag: String, message: String) {
-        Log.println(type, tag, message) // or forward to your own logger/queue
-    }
+val sink = BatchingSink(LogSink { type, tag, message ->
+    Log.println(type, tag, message) // or forward to your own logger/queue
 })
 
 val client = OkHttpClient.Builder()
@@ -93,7 +91,7 @@ allprojects {
 }
 
 dependencies {
-    implementation("com.github.rtsketo:LoggingInterceptor:3.1.2") {
+    implementation("com.github.rtsketo:LoggingInterceptor:3.1.0rt6") {
         exclude(group = "org.json", module = "json")
     }
 }
@@ -107,9 +105,9 @@ Maven:
 </repository>
 
 <dependency>
-    <groupId>com.github.ihsanbal</groupId>
+    <groupId>com.github.rtsketo</groupId>
     <artifactId>LoggingInterceptor</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.0rt6</version>
 </dependency>
 ```
 
