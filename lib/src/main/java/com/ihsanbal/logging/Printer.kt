@@ -159,6 +159,7 @@ class Printer private constructor() {
         private fun logLines(type: Int, tag: String, lines: Array<String>, logger: Logger?,
                              withLineSize: Boolean, useLogHack: Boolean) {
             for (line in lines) {
+                if (line.isBlank()) continue
                 val lineLength = line.length
                 val maxLogSize = if (withLineSize) 110 else lineLength
                 for (i in 0..lineLength / maxLogSize) {
