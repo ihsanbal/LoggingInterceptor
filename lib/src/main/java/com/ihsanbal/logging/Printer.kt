@@ -124,7 +124,7 @@ class Printer private constructor() {
 
         private fun getStatusLine(tookMs: Long, code: Int, message: String): Array<String> {
             val status = "$STATUS_LINE_TAG$code / $message ($RECEIVED_TAG$tookMs ms)"
-            return arrayOf(status, "")
+            return arrayOf(status)
         }
 
         private fun slashSegments(segments: List<String>): String {
@@ -146,7 +146,6 @@ class Printer private constructor() {
         private fun logLines(type: Int, tag: String, lines: Array<String>, logger: Logger?,
                              withLineSize: Boolean, useLogHack: Boolean) {
             for (line in lines) {
-                if (line.isBlank()) continue
                 val lineLength = line.length
                 val maxLogSize = if (withLineSize) 110 else lineLength
                 for (i in 0..lineLength / maxLogSize) {
