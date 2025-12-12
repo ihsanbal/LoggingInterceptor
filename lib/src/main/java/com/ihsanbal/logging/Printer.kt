@@ -31,7 +31,7 @@ class Printer private constructor() {
         private const val URL_TAG = "URL: "
         private const val METHOD_TAG = "Method: @"
         private const val HEADERS_TAG = "Headers:"
-        private const val STATUS_CODE_TAG = "Status Code: "
+        private const val STATUS_LINE_TAG = "Status Code: "
         private const val RECEIVED_TAG = "Received in: "
         private const val DEFAULT_LINE = "│ "
         private val OOM_OMITTED = LINE_SEPARATOR + "Output omitted because of Object size."
@@ -57,14 +57,12 @@ class Printer private constructor() {
                               code: Int, headers: Headers, response: Response, segments: List<String>, message: String, responseUrl: String) {
             val responseBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + getResponseBody(response)
             val tag = builder.getTag(false)
-            val urlLine = arrayOf(URL_TAG + responseUrl, N)
-            val responseString = getResponse(headers, chainMs, code, isSuccessful,
-                    builder.level, segments, message)
+            val statusLine = getStatusLine(chainMs, code, message)
             if (builder.logger == null) {
                 I.log(builder.type, tag, RESPONSE_UP_LINE, builder.isLogHackEnable)
             }
-            logLines(builder.type, tag, urlLine, builder.logger, true, builder.isLogHackEnable)
-            logLines(builder.type, tag, responseString, builder.logger, true, builder.isLogHackEnable)
+            logLines(builder.type, tag, arrayOf(URL_TAG + responseUrl), builder.logger, false, builder.isLogHackEnable)
+            logLines(builder.type, tag, statusLine, builder.logger, true, builder.isLogHackEnable)
             if (builder.level == Level.BASIC || builder.level == Level.BODY) {
                 logLines(builder.type, tag, responseBody.split(LINE_SEPARATOR).toTypedArray(), builder.logger,
                         true, builder.isLogHackEnable)
@@ -124,20 +122,9 @@ class Printer private constructor() {
             return log.split(LINE_SEPARATOR).toTypedArray()
         }
 
-        private fun getResponse(headers: Headers, tookMs: Long, code: Int, isSuccessful: Boolean,
-                                level: Level, segments: List<String>, message: String): Array<String> {
-            val log: String
-            val loggableHeader = level == Level.HEADERS || level == Level.BASIC
-            val segmentString = slashSegments(segments)
-            log = ((if (segmentString.isNotEmpty()) "$segmentString - " else "") + "[is success : "
-                    + isSuccessful + "] - " + RECEIVED_TAG + tookMs + "ms" + DOUBLE_SEPARATOR + STATUS_CODE_TAG +
-                    code + " / " + message + DOUBLE_SEPARATOR + when {
-                isEmpty("$headers") -> ""
-                loggableHeader -> HEADERS_TAG + LINE_SEPARATOR +
-                        dotHeaders(headers)
-                else -> ""
-            })
-            return log.split(LINE_SEPARATOR).toTypedArray()
+        private fun getStatusLine(tookMs: Long, code: Int, message: String): Array<String> {
+            val status = "$STATUS_LINE_TAG$code / $message ($RECEIVED_TAG$tookMs ms)"
+            return arrayOf(status, "")
         }
 
         private fun slashSegments(segments: List<String>): String {
