@@ -1,9 +1,12 @@
 package com.ihsanbal.logging
 
-import okhttp3.*
+import okhttp3.HttpUrl
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
-import okhttp3.internal.platform.Platform.Companion.INFO
 import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
@@ -95,7 +98,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         var isLogHackEnable = false
             private set
         var isDebugAble = false
-        var type: Int = INFO
+        var type: Int = DEFAULT_LOG_TYPE
             private set
         private var requestTag: String? = null
         private var responseTag: String? = null
@@ -255,6 +258,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         }
 
         companion object {
+            private const val DEFAULT_LOG_TYPE = 4 // android.util.Log.INFO compatible
             private var TAG = "LoggingI"
         }
     }
