@@ -108,9 +108,9 @@ Maven:
 </repository>
 
 <dependency>
-    <groupId>com.github.rtsketo</groupId>
+    <groupId>com.github.ihsanbal</groupId>
     <artifactId>LoggingInterceptor</artifactId>
-    <version>3.1.0rt6</version>
+    <version>3.1.0</version>
 </dependency>
 ```
 
