@@ -10,7 +10,7 @@ import ihsanbal.com.logginginterceptor.BuildConfig
 import ihsanbal.com.logginginterceptor.api.Api
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
@@ -49,7 +49,7 @@ class NetModule(private val mEndPoint: String, private val mAssetManager: AssetM
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .baseUrl(mEndPoint)
                 .client(okHttpClient)
                 .build()

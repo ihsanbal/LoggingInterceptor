@@ -5,33 +5,33 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.http.*
-import rx.Observable
+import io.reactivex.rxjava3.core.Observable
 
 /**
  * @author ihsan on 09/02/2017.
  */
 interface Api {
     @GET("get?test=123")
-    fun get(): Observable<ResponseBody?>
+    fun get(): Observable<ResponseBody>
 
     @DELETE("delete")
-    fun delete(): Observable<ResponseBody?>
+    fun delete(): Observable<ResponseBody>
 
     @POST("post?query=q")
     @Headers("Cache-Control: Custom-Max-Value=640000")
-    fun post(@retrofit2.http.Body requestBody: Body?): Observable<ResponseBody?>
+    fun post(@retrofit2.http.Body requestBody: Body?): Observable<ResponseBody>
 
-    @PATCH("segment/patch")
-    fun patch(@Query("query") q: String?): Observable<ResponseBody?>
+    @PATCH("patch")
+    fun patch(@Query("query") q: String?): Observable<ResponseBody>
 
     @PUT("put")
-    fun put(): Observable<ResponseBody?>
+    fun put(): Observable<ResponseBody>
 
     @Streaming
     @GET("http://che.org.il/wp-content/uploads/2016/12/pdf-sample.pdf")
-    fun pdf(): Observable<ResponseBody?>
+    fun pdf(): Observable<ResponseBody>
 
     @Multipart
     @POST("post")
-    fun post(@Part("description") description: RequestBody?, @Part file: MultipartBody.Part?): Observable<ResponseBody?>
+    fun post(@Part("description") description: RequestBody?, @Part file: MultipartBody.Part?): Observable<ResponseBody>
 }
