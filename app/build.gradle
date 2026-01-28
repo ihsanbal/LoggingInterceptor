@@ -1,20 +1,26 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+}
 
 android {
-    compileSdkVersion 29
-    //noinspection GradleDependency
+    namespace 'ihsanbal.com.logginginterceptor'
+    compileSdk 36
 
     defaultConfig {
         applicationId "ihsanbal.com.logginginterceptor"
-        minSdkVersion 21
-        targetSdkVersion 29
+        minSdk 21
+        targetSdk 36
         versionCode 1
         versionName "1.0"
         buildConfigField("boolean", "MOCK", "false")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        buildConfig true
+        viewBinding true
     }
 
     compileOptions {
@@ -22,7 +28,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    lintOptions {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    lint {
         abortOnError false
 
         disable 'AllowBackup'
@@ -41,30 +51,23 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.2.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'io.reactivex:rxjava:' + rxjavaVersion
-    implementation 'io.reactivex:rxandroid:' + rxAndroidVersion
-    implementation 'com.squareup.retrofit2:retrofit:' + retrofitVersion
-    implementation 'com.squareup.retrofit2:adapter-rxjava:' + retrofitRxAdapterVersion
-    implementation 'com.google.dagger:dagger:' + daggerVersion
-    implementation 'com.squareup.retrofit2:converter-gson:' + gsonConverterVersion
-    implementation 'com.squareup.okhttp3:okhttp:' + okhttpVersion
-    implementation 'com.squareup.okio:okio:' + okioVersion
-    kapt 'com.google.dagger:dagger-compiler:' + daggerVersion
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:' + leakCanaryVersion
-    releaseApi 'com.squareup.leakcanary:leakcanary-android-no-op:' + leakCanaryVersion
-    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:' + leakCanaryVersion
-    compileOnly 'javax.annotation:jsr250-api:1.0'
+    implementation "androidx.core:core-ktx:$coreKtxVersion"
+    implementation "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation "io.reactivex.rxjava3:rxjava:$rxjavaVersion"
+    implementation "io.reactivex.rxjava3:rxandroid:$rxAndroidVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava3:$retrofitRxAdapterVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$gsonConverterVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    implementation "com.squareup.okio:okio:$okioVersion"
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    compileOnly "javax.annotation:jsr250-api:1.0"
     implementation(project(':lib')) {
         exclude group: 'org.json', module: 'json'
     }
-//    implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0-rc2') {
-//        exclude group: 'org.json', module: 'json'
-//    }
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    androidTestImplementation "androidx.test.ext:junit:$junitExtVersion"
+    androidTestImplementation "androidx.test:rules:$testRulesVersion"
 }
