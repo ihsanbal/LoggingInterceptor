@@ -236,10 +236,14 @@ class Printer private constructor() {
             return message
         }
 
-        fun printFailed(tag: String, builder: LoggingInterceptor.Builder) {
-            I.log(builder.type, tag, RESPONSE_UP_LINE, builder.isLogHackEnable)
-            I.log(builder.type, tag, DEFAULT_LINE + "Response failed", builder.isLogHackEnable)
-            I.log(builder.type, tag, END_LINE, builder.isLogHackEnable)
+        fun printFailed(tag: String, builder: LoggingInterceptor.Builder, responseUrl: String, reason: String?) {
+            val sink = builder.sink
+            emit(builder, tag, RESPONSE_UP_LINE)
+            logLines(builder.type, tag, arrayOf(URL_TAG + responseUrl), builder.logger, false, builder.isLogHackEnable, sink)
+            val failureLine = if (reason.isNullOrBlank()) "Response failed" else "Response failed: $reason"
+            logLines(builder.type, tag, arrayOf(failureLine), builder.logger, true, builder.isLogHackEnable, sink)
+            emit(builder, tag, END_LINE)
+            sink?.close(builder.type, tag)
         }
     }
 

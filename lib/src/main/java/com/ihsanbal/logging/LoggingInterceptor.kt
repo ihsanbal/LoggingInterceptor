@@ -31,7 +31,14 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         try {
             response = proceedResponse(chain, request)
         } catch (e: Exception) {
-            Printer.printFailed(builder.getTag(false), builder)
+            val reason = buildString {
+                append(e.javaClass.simpleName)
+                if (!e.message.isNullOrBlank()) {
+                    append(": ")
+                    append(e.message)
+                }
+            }
+            Printer.printFailed(builder.getTag(false), builder, request.url.toString(), reason)
             throw e
         }
         val receivedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
