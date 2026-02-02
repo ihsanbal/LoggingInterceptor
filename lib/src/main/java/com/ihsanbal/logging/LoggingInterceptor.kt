@@ -1,9 +1,12 @@
 package com.ihsanbal.logging
 
-import okhttp3.*
+import okhttp3.HttpUrl
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
-import okhttp3.internal.platform.Platform.Companion.INFO
 import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
@@ -28,7 +31,14 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         try {
             response = proceedResponse(chain, request)
         } catch (e: Exception) {
-            Printer.printFailed(builder.getTag(false), builder)
+            val reason = buildString {
+                append(e.javaClass.simpleName)
+                if (!e.message.isNullOrBlank()) {
+                    append(": ")
+                    append(e.message)
+                }
+            }
+            Printer.printFailed(builder.getTag(false), builder, request.url.toString(), reason)
             throw e
         }
         val receivedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
@@ -95,7 +105,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         var isLogHackEnable = false
             private set
         var isDebugAble = false
-        var type: Int = INFO
+        var type: Int = DEFAULT_LOG_TYPE
             private set
         private var requestTag: String? = null
         private var responseTag: String? = null
@@ -103,6 +113,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
             private set
         var logger: Logger? = null
             private set
+        var sink: LogSink? = null
         var isMockEnabled = false
         var sleepMs: Long = 0
         var listener: BufferListener? = null
@@ -250,11 +261,21 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
             return this
         }
 
+        /**
+         * Override the default line logger with a sink. If both logger and sink
+         * are set, sink takes precedence.
+         */
+        fun sink(sink: LogSink): Builder {
+            this.sink = sink
+            return this
+        }
+
         fun build(): LoggingInterceptor {
             return LoggingInterceptor(this)
         }
 
         companion object {
+            private const val DEFAULT_LOG_TYPE = 4 // android.util.Log.INFO compatible
             private var TAG = "LoggingI"
         }
     }

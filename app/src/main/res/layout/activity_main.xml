@@ -8,49 +8,49 @@
     tools:context=".ui.MainActivity">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button.post"
+        android:id="@+id/button_post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_post" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button.zip"
+        android:id="@+id/button_zip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_zip" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button.get"
+        android:id="@+id/button_get"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_get" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button.delete"
+        android:id="@+id/button_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_delete" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button.patch"
+        android:id="@+id/button_patch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_patch" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button.put"
+        android:id="@+id/button_put"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_put" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button.pdf"
+        android:id="@+id/button_pdf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_pdf" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button.pdf.upload"
+        android:id="@+id/button_pdf_upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/req_pdf_upload" />

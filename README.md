@@ -39,9 +39,9 @@ allprojects {
 }
 
 dependencies {
-	implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0') {
-        	exclude group: 'org.json', module: 'json'
-    	}
+    implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0') {
+            exclude group: 'org.json', module: 'json'
+        }
 }
 ```
 
@@ -55,11 +55,49 @@ allprojects {
 
 
 dependencies {
-	implementation("com.github.ihsanbal:LoggingInterceptor:3.1.0") {
-        	exclude(group = "org.json", module = "json")
-    	}
+    implementation("com.github.ihsanbal:LoggingInterceptor:3.1.0") {
+            exclude(group = "org.json", module = "json")
+        }
 }
 
+```
+
+## Batching and custom sinks (fork feature)
+
+This fork adds a `sink(...)` API so you can batch a whole request/response block before logging
+to avoid interleaving in Logcat. Example (using the bundled `BatchingSink`, now public):
+
+```kotlin
+val sink = BatchingSink(LogSink { type, tag, message ->
+    // Logcat truncates ~4k per line; forward to your own chunker if needed
+    Log.println(type, tag, message)
+})
+
+val client = OkHttpClient.Builder()
+    .addInterceptor(
+        LoggingInterceptor.Builder()
+            .setLevel(Level.BODY)
+            .log(Log.DEBUG)
+            .sink(sink)
+            .build()
+    )
+    .build()
+
+If you need chunking/queuing (e.g., Logcat 4k limit), wrap the `LogSink` to your own queue before passing to `BatchingSink`, similar to the sample above.
+```
+
+If you want the forked artifact via JitPack:
+
+```kotlin
+allprojects {
+    repositories { maven { setUrl("https://jitpack.io") } }
+}
+
+dependencies {
+    implementation("com.github.rtsketo:LoggingInterceptor:3.1.0rt6") {
+        exclude(group = "org.json", module = "json")
+    }
+}
 ```
 
 Maven:

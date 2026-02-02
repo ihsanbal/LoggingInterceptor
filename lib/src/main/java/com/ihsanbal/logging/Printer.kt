@@ -31,7 +31,7 @@ class Printer private constructor() {
         private const val URL_TAG = "URL: "
         private const val METHOD_TAG = "Method: @"
         private const val HEADERS_TAG = "Headers:"
-        private const val STATUS_CODE_TAG = "Status Code: "
+        private const val STATUS_LINE_TAG = "Status Code: "
         private const val RECEIVED_TAG = "Received in: "
         private const val DEFAULT_LINE = "│ "
         private val OOM_OMITTED = LINE_SEPARATOR + "Output omitted because of Object size."
@@ -44,34 +44,32 @@ class Printer private constructor() {
                 LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + bodyToString(body, header)
             } ?: ""
             val tag = builder.getTag(true)
-            if (builder.logger == null) I.log(builder.type, tag, REQUEST_UP_LINE, builder.isLogHackEnable)
-            logLines(builder.type, tag, arrayOf(URL_TAG + url), builder.logger, false, builder.isLogHackEnable)
-            logLines(builder.type, tag, getRequest(builder.level, header, method), builder.logger, true, builder.isLogHackEnable)
+            val sink = builder.sink
+            emit(builder, tag, REQUEST_UP_LINE)
+            logLines(builder.type, tag, arrayOf(URL_TAG + url), builder.logger, false, builder.isLogHackEnable, sink)
+            logLines(builder.type, tag, getRequest(builder.level, header, method), builder.logger, true, builder.isLogHackEnable, sink)
             if (builder.level == Level.BASIC || builder.level == Level.BODY) {
-                logLines(builder.type, tag, requestBody.split(LINE_SEPARATOR).toTypedArray(), builder.logger, true, builder.isLogHackEnable)
+                logLines(builder.type, tag, requestBody.split(LINE_SEPARATOR).toTypedArray(), builder.logger, true, builder.isLogHackEnable, sink)
             }
-            if (builder.logger == null) I.log(builder.type, tag, END_LINE, builder.isLogHackEnable)
+            emit(builder, tag, END_LINE)
+            sink?.close(builder.type, tag)
         }
 
         fun printJsonResponse(builder: LoggingInterceptor.Builder, chainMs: Long, isSuccessful: Boolean,
                               code: Int, headers: Headers, response: Response, segments: List<String>, message: String, responseUrl: String) {
             val responseBody = LINE_SEPARATOR + BODY_TAG + LINE_SEPARATOR + getResponseBody(response)
             val tag = builder.getTag(false)
-            val urlLine = arrayOf(URL_TAG + responseUrl, N)
-            val responseString = getResponse(headers, chainMs, code, isSuccessful,
-                    builder.level, segments, message)
-            if (builder.logger == null) {
-                I.log(builder.type, tag, RESPONSE_UP_LINE, builder.isLogHackEnable)
-            }
-            logLines(builder.type, tag, urlLine, builder.logger, true, builder.isLogHackEnable)
-            logLines(builder.type, tag, responseString, builder.logger, true, builder.isLogHackEnable)
+            val statusLine = getStatusLine(chainMs, code, message)
+            val sink = builder.sink
+            emit(builder, tag, RESPONSE_UP_LINE)
+            logLines(builder.type, tag, arrayOf(URL_TAG + responseUrl), builder.logger, false, builder.isLogHackEnable, sink)
+            logLines(builder.type, tag, statusLine, builder.logger, true, builder.isLogHackEnable, sink)
             if (builder.level == Level.BASIC || builder.level == Level.BODY) {
                 logLines(builder.type, tag, responseBody.split(LINE_SEPARATOR).toTypedArray(), builder.logger,
-                        true, builder.isLogHackEnable)
+                        true, builder.isLogHackEnable, sink)
             }
-            if (builder.logger == null) {
-                I.log(builder.type, tag, END_LINE, builder.isLogHackEnable)
-            }
+            emit(builder, tag, END_LINE)
+            sink?.close(builder.type, tag)
         }
 
         private fun getResponseBody(response: Response): String {
@@ -124,20 +122,19 @@ class Printer private constructor() {
             return log.split(LINE_SEPARATOR).toTypedArray()
         }
 
-        private fun getResponse(headers: Headers, tookMs: Long, code: Int, isSuccessful: Boolean,
-                                level: Level, segments: List<String>, message: String): Array<String> {
-            val log: String
-            val loggableHeader = level == Level.HEADERS || level == Level.BASIC
-            val segmentString = slashSegments(segments)
-            log = ((if (segmentString.isNotEmpty()) "$segmentString - " else "") + "[is success : "
-                    + isSuccessful + "] - " + RECEIVED_TAG + tookMs + "ms" + DOUBLE_SEPARATOR + STATUS_CODE_TAG +
-                    code + " / " + message + DOUBLE_SEPARATOR + when {
-                isEmpty("$headers") -> ""
-                loggableHeader -> HEADERS_TAG + LINE_SEPARATOR +
-                        dotHeaders(headers)
-                else -> ""
-            })
-            return log.split(LINE_SEPARATOR).toTypedArray()
+        private fun getStatusLine(tookMs: Long, code: Int, message: String): Array<String> {
+            val status = "$STATUS_LINE_TAG$code / $message ($RECEIVED_TAG$tookMs ms)"
+            return arrayOf(status)
+        }
+
+        private fun emit(builder: LoggingInterceptor.Builder, tag: String, line: String) {
+            val sink = builder.sink
+            val logger = builder.logger
+            when {
+                sink != null -> sink.log(builder.type, tag, line)
+                logger == null -> I.log(builder.type, tag, line, builder.isLogHackEnable)
+                else -> logger.log(builder.type, tag, line)
+            }
         }
 
         private fun slashSegments(segments: List<String>): String {
@@ -157,7 +154,7 @@ class Printer private constructor() {
         }
 
         private fun logLines(type: Int, tag: String, lines: Array<String>, logger: Logger?,
-                             withLineSize: Boolean, useLogHack: Boolean) {
+                             withLineSize: Boolean, useLogHack: Boolean, sink: LogSink? = null) {
             for (line in lines) {
                 val lineLength = line.length
                 val maxLogSize = if (withLineSize) 110 else lineLength
@@ -165,10 +162,11 @@ class Printer private constructor() {
                     val start = i * maxLogSize
                     var end = (i + 1) * maxLogSize
                     end = if (end > line.length) line.length else end
-                    if (logger == null) {
-                        I.log(type, tag, DEFAULT_LINE + line.substring(start, end), useLogHack)
-                    } else {
-                        logger.log(type, tag, line.substring(start, end))
+                    val chunk = DEFAULT_LINE + line.substring(start, end)
+                    when {
+                        sink != null -> sink.log(type, tag, chunk)
+                        logger == null -> I.log(type, tag, chunk, useLogHack)
+                        else -> logger.log(type, tag, chunk)
                     }
                 }
             }
@@ -238,10 +236,14 @@ class Printer private constructor() {
             return message
         }
 
-        fun printFailed(tag: String, builder: LoggingInterceptor.Builder) {
-            I.log(builder.type, tag, RESPONSE_UP_LINE, builder.isLogHackEnable)
-            I.log(builder.type, tag, DEFAULT_LINE + "Response failed", builder.isLogHackEnable)
-            I.log(builder.type, tag, END_LINE, builder.isLogHackEnable)
+        fun printFailed(tag: String, builder: LoggingInterceptor.Builder, responseUrl: String, reason: String?) {
+            val sink = builder.sink
+            emit(builder, tag, RESPONSE_UP_LINE)
+            logLines(builder.type, tag, arrayOf(URL_TAG + responseUrl), builder.logger, false, builder.isLogHackEnable, sink)
+            val failureLine = if (reason.isNullOrBlank()) "Response failed" else "Response failed: $reason"
+            logLines(builder.type, tag, arrayOf(failureLine), builder.logger, true, builder.isLogHackEnable, sink)
+            emit(builder, tag, END_LINE)
+            sink?.close(builder.type, tag)
         }
     }
 
