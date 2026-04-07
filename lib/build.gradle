@@ -17,6 +17,7 @@ tasks.withType(KotlinCompile).configureEach {
 dependencies {
     implementation group: 'org.json', name: 'json', version: jsonVersion
     implementation group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: okhttpVersion
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 }
 
 apply from: '../pTML.gradle'

@@ -18,6 +18,7 @@ Usage
 val client = OkHttpClient.Builder()
     client.addInterceptor(LoggingInterceptor.Builder()
              .setLevel(Level.BASIC)
+             .logHeaders(true)
              .log(VERBOSE)
              .addHeader("cityCode","53")
              .addQueryParam("moonStatus", "crescent")
@@ -64,18 +65,22 @@ dependencies {
 ## Batching and custom sinks (fork feature)
 
 This fork adds a `sink(...)` API so you can batch a whole request/response block before logging
-to avoid interleaving in Logcat. Example (using the bundled `BatchingSink`, now public):
+to avoid interleaving in Logcat. The bundled `BatchingSink` now isolates concurrent request/response
+blocks per thread even when they share the same log tag. Example:
 
 ```kotlin
-val sink = BatchingSink(LogSink { type, tag, message ->
-    // Logcat truncates ~4k per line; forward to your own chunker if needed
-    Log.println(type, tag, message)
+val sink = BatchingSink(object : LogSink {
+    override fun log(type: Int, tag: String, message: String) {
+        // Logcat truncates ~4k per line; forward to your own chunker if needed
+        Log.println(type, tag, message)
+    }
 })
 
 val client = OkHttpClient.Builder()
     .addInterceptor(
         LoggingInterceptor.Builder()
             .setLevel(Level.BODY)
+            .logHeaders(true)
             .log(Log.DEBUG)
             .sink(sink)
             .build()
